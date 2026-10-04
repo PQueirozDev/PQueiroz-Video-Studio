@@ -41,6 +41,7 @@ O fluxo de edição continua sendo o do CLAUDE.md de \`${s.aqcRoot}\` (reproduzi
 - FFmpeg: ${ff ? `\`${ff}\`` : 'NÃO ENCONTRADO'}
 - Python para o montar.py: ${py ? `\`${py}\` — rode como \`PYTHONUTF8=1 "${py}" montar.py --preview\`` : '**NÃO INSTALADO.** O montar.py não roda. Avise o Pedro para usar "Preparar ambiente Python" em Configurações; enquanto isso, edições simples podem ser feitas direto com ffmpeg.'}
 ${aqc.stalePaths.length ? `- **Caminhos antigos:** o CLAUDE.md e os scripts (${aqc.stalePaths.join(', ')}) citam \`C:\\aqc\`, mas a pasta agora é \`${s.aqcRoot}\`. Leia todo \`C:\\aqc\` como \`${s.aqcRoot}\`. A cópia em \`edit/\` já foi corrigida pelo estúdio (RES, HISTORICO e a leitura do ffprobe para o FFmpeg 9).` : ''}
+${process.platform !== 'win32' ? '- Este computador é **Linux**: o CLAUDE.md foi escrito no Windows. Ignore `.venv/Scripts/python.exe` (use o Python indicado acima) e use a sintaxe de shell do Linux.' : ''}
 ${missingSkills.length ? `- A skill ${missingSkills.map((m) => `\`${m.name}\``).join(', ')} citada no CLAUDE.md não está instalada neste computador. Siga o fluxo descrito no próprio CLAUDE.md (analisar → propor estratégia → confirmar → renderizar → autoavaliar): use o Python indicado acima.` : ''}`)
 
   parts.push(`## Estrutura do projeto

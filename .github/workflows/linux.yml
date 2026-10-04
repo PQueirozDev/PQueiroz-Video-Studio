@@ -1,0 +1,35 @@
+name: Build Linux
+
+# O instalador do Windows é gerado localmente (npm run dist). O AppImage e o .deb precisam de Linux
+# para empacotar, então são gerados aqui e anexados ao mesmo release.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release que recebe os arquivos (ex.: v0.2.2)
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run dist:linux
+      - name: Anexar ao release
+        run: gh release upload "$TAG" dist/*.AppImage dist/*.deb dist/latest-linux.yml --clobber

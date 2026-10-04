@@ -7,7 +7,7 @@ import { Button, Logo, Spinner } from './ui'
 import { startupChecks } from './Splash'
 
 const LABELS: Record<EnvCheck['id'], string> = {
-  claude: 'Claude', ffmpeg: 'FFmpeg', skills: 'Video Skills', aqc: 'E:\\aqc', python: 'Python', workspace: 'Workspace'
+  claude: 'Claude', ffmpeg: 'FFmpeg', skills: 'Video Skills', aqc: 'Sistema de edição', python: 'Python', workspace: 'Workspace'
 }
 const ORDER: EnvCheck['id'][] = ['claude', 'ffmpeg', 'skills', 'aqc', 'python', 'workspace']
 
@@ -30,7 +30,7 @@ export function EnvChecklist({ checks, onChange, ids = ORDER }: { checks: EnvChe
   }
 
   const pickFolder = async (key: 'aqcRoot' | 'projectsRoot', id: EnvCheck['id']): Promise<void> => {
-    const dir = await api.settings.pickFolder(key === 'aqcRoot' ? 'Pasta do sistema de edição (E:\\aqc)' : 'Pasta dos projetos', settings?.[key])
+    const dir = await api.settings.pickFolder(key === 'aqcRoot' ? 'Pasta do sistema de edição (aqc)' : 'Pasta dos projetos', settings?.[key])
     if (!dir) return
     await saveSettings({ [key]: dir })
     await recheck(key === 'aqcRoot' ? ['aqc', 'skills'] : [id])

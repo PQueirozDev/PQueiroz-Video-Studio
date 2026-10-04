@@ -18,9 +18,10 @@ let win: BrowserWindow | null = null
 
 const APP_ID = 'com.pqueiroz.videostudio.desktop'
 
-/** .ico com todos os tamanhos: no app instalado fica em resources/, fora do app.asar. */
+/** .ico com todos os tamanhos (no Linux, .png): no app instalado fica em resources/, fora do app.asar. */
 function appIcon(): string {
-  return app.isPackaged ? join(process.resourcesPath, 'icon.ico') : join(app.getAppPath(), 'build', 'icon.ico')
+  const file = process.platform === 'win32' ? 'icon.ico' : 'icon.png'
+  return app.isPackaged ? join(process.resourcesPath, file) : join(app.getAppPath(), 'build', file)
 }
 
 interface Bounds { x?: number; y?: number; width: number; height: number; maximized?: boolean }

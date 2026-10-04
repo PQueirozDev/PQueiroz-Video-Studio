@@ -140,7 +140,7 @@ export function ChatPanel() {
             <div className="text-center">
               <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent"><Bot className="h-4 w-4" /></div>
               <p className="text-[13px] font-medium">Peça qualquer edição</p>
-              <p className="mt-0.5 text-xs text-faint">O Claude usa o CLAUDE.md e o modelo de edição de E:\aqc.</p>
+              <p className="mt-0.5 text-xs text-faint">O Claude usa o CLAUDE.md e o modelo de edição da pasta aqc.</p>
             </div>
             <div className="flex flex-col gap-1.5">
               {SUGGESTIONS.map((s) => (

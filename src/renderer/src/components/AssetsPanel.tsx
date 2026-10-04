@@ -74,14 +74,14 @@ export function AssetsPanel() {
             <div key={a.path} className="group overflow-hidden rounded-lg border border-line bg-panel-2">
               <div className="relative flex aspect-video items-center justify-center bg-[repeating-conic-gradient(#1b1b24_0%_25%,#15151c_0%_50%)] bg-[length:16px_16px]">
                 {a.thumbnail ? <img src={mediaUrl(a.thumbnail)} className="max-h-full max-w-full object-contain" alt="" /> : <Icon className="h-6 w-6 text-faint" />}
-                {a.readOnly && <span title="E:\aqc — somente leitura" className="absolute left-1.5 top-1.5 rounded bg-black/70 p-1"><Lock className="h-3 w-3 text-muted" /></span>}
+                {a.readOnly && <span title="aqc — somente leitura" className="absolute left-1.5 top-1.5 rounded bg-black/70 p-1"><Lock className="h-3 w-3 text-muted" /></span>}
                 <div className="absolute inset-0 flex items-center justify-center bg-black/55 opacity-0 transition-opacity group-hover:opacity-100">
                   <Button size="sm" variant="primary" disabled={!projectId} onClick={() => use(a)}>Usar no projeto</Button>
                 </div>
               </div>
               <div className="px-2 py-1.5">
                 <p className="truncate text-xs font-medium" title={a.path}>{a.name}</p>
-                <p className="text-[10.5px] text-faint">{fmtSize(a.size)}{a.readOnly ? ' · E:\\aqc' : ''}</p>
+                <p className="text-[10.5px] text-faint">{fmtSize(a.size)}{a.readOnly ? ' · aqc' : ''}</p>
               </div>
             </div>
           ))}

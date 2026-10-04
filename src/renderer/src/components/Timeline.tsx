@@ -228,7 +228,7 @@ export function Timeline() {
           {videos.length ? videos.map((m) => clip(m, 'border-info/40 bg-info/15 text-fg', PX_PER_SEC)) : <span className="self-center px-2 text-[11px] text-faint">sem vídeos</span>}
         </Track>
         <Track label="Áudio" icon={<Music className="h-3 w-3" />}>
-          {audios.length ? audios.map((m) => clip(m, 'border-ok/35 bg-ok/10 text-fg', PX_PER_SEC)) : <span className="self-center px-2 text-[11px] text-faint">sem áudio importado — o Claude sorteia uma música de E:\aqc\Recursos</span>}
+          {audios.length ? audios.map((m) => clip(m, 'border-ok/35 bg-ok/10 text-fg', PX_PER_SEC)) : <span className="self-center px-2 text-[11px] text-faint">sem áudio importado — o Claude sorteia uma música de aqc/Recursos</span>}
         </Track>
         {images.length > 0 && (
           <Track label="Imagens" icon={<ImageIcon className="h-3 w-3" />}>

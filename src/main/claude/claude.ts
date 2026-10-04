@@ -1,20 +1,20 @@
 import { spawn, type ChildProcess } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
-import { dirname } from 'node:path'
+import { delimiter, dirname } from 'node:path'
 import type { ChatMessage, ClaudeEvent, Version } from '@shared/types'
 import { all, run } from '../db'
 import { ensureDir } from '../files'
 import { getProject, projectPath, requireProject, setClaudeSession, touchProject } from '../projects/projects'
 import { getSettings } from '../settings'
 import { claudePath, ffmpegPath, pythonPath } from '../tools'
-import { killTree, now, uid } from '../util'
+import { killTree, now, ownGroup, uid } from '../util'
 import { listVersions, restoreVersion, snapshotOutputs } from '../versions/versions'
 import { prepareEditFolder } from '../skills/template'
 import { buildContext } from './context'
 import { describeTool } from './status'
 import { applyRateLimitEvent } from './usage'
 
-// Cada pedido do chat roda o Claude Code (claude.exe) em modo não interativo, num processo
+// Cada pedido do chat roda o Claude Code (claude) em modo não interativo, num processo
 // separado, com a pasta do projeto como diretório de trabalho. A sessão é retomada a cada
 // turno (--resume), então o Claude lembra de toda a conversa do projeto.
 
@@ -138,9 +138,9 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
 
   // Python e FFmpeg no PATH do Claude, e UTF-8 para os helpers (exigência do CLAUDE.md no Windows).
   const extraPath = [await pythonPath(), await ffmpegPath()].filter(Boolean).map((p) => dirname(p!))
-  const env = { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8', PATH: [...extraPath, process.env.PATH].join(';') }
+  const env = { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8', PATH: [...extraPath, process.env.PATH].join(delimiter) }
 
-  const child = spawn(bin, args, { cwd: project.path, env, windowsHide: true, shell: false })
+  const child = spawn(bin, args, { cwd: project.path, env, windowsHide: true, shell: false, detached: ownGroup })
   const state: Running = { child, cancelled: false }
   running.set(projectId, state)
 

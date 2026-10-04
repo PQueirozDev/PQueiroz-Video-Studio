@@ -1,7 +1,7 @@
 {
   "name": "pqueiroz-video-studio",
   "productName": "PQueiroz Video Studio",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Central de edição de vídeos assistida por IA: projetos, preview, versões e render, com o Claude Code usando o seu fluxo de edição.",
   "author": "Pedro Queiroz",
   "private": true,
@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "dist": "electron-vite build && electron-builder --win --x64 --publish never",
     "dist:dir": "electron-vite build && electron-builder --win dir",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "dist:linux": "electron-vite build && electron-builder --linux AppImage deb --x64 --publish never"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
@@ -76,8 +77,31 @@
       {
         "from": "build/icon.ico",
         "to": "icon.ico"
+      },
+      {
+        "from": "build/icon.png",
+        "to": "icon.png"
       }
-    ]
+    ],
+    "linux": {
+      "icon": "build/icon.png",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "AudioVideo",
+      "artifactName": "PQueiroz-Video-Studio.${ext}",
+      "synopsis": "Edição de vídeos assistida por IA",
+      "maintainer": "Pedro Queiroz <pedrohenriqueiroz158@gmail.com>",
+      "syncDesktopName": true
+    },
+    "deb": {
+      "depends": [
+        "ffmpeg",
+        "python3",
+        "python3-venv"
+      ]
+    }
   },
   "dependencies": {
     "electron-updater": "^6.8.9"
@@ -87,5 +111,6 @@
     "url": "https://github.com/PQueirozDev/PQueiroz-Video-Studio.git"
   },
   "homepage": "https://pqueirozdev.github.io/PQueiroz-Video-Studio",
-  "license": "MIT"
+  "license": "MIT",
+  "desktopName": "pqueiroz-video-studio.desktop"
 }

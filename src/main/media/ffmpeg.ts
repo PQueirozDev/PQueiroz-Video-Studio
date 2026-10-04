@@ -1,6 +1,6 @@
 import { spawn, type ChildProcess } from 'node:child_process'
 import { ffmpegPath, ffprobePath } from '../tools'
-import { exec } from '../util'
+import { exec, ownGroup } from '../util'
 
 export interface ProbeResult {
   duration: number | null
@@ -70,7 +70,7 @@ export interface FfmpegRun {
 export async function runFfmpeg(args: string[], duration: number | null, onProgress: (p: number) => void): Promise<FfmpegRun> {
   const bin = await ffmpegPath()
   if (!bin) throw new Error('FFmpeg não encontrado')
-  const child = spawn(bin, ['-hide_banner', '-nostats', '-progress', 'pipe:1', ...args], { windowsHide: true })
+  const child = spawn(bin, ['-hide_banner', '-nostats', '-progress', 'pipe:1', ...args], { windowsHide: true, detached: ownGroup })
   let stderr = ''
   let buf = ''
   child.stdout.on('data', (d: Buffer) => {

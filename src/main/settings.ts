@@ -4,10 +4,12 @@ import { join } from 'node:path'
 import type { Settings } from '@shared/types'
 import { all, run } from './db'
 
-const AQC_DEFAULT = 'E:\\aqc'
+// No Windows o sistema de edição fica em E:\aqc; no Linux, em ~/aqc.
+const IS_WIN = process.platform === 'win32'
+const AQC_DEFAULT = IS_WIN ? 'E:\\aqc' : join(homedir(), 'aqc')
 
 function defaults(): Settings {
-  const drive = existsSync('E:\\') ? 'E:\\' : join(homedir(), 'Videos')
+  const drive = IS_WIN && existsSync('E:\\') ? 'E:\\' : join(homedir(), 'Videos')
   return {
     aqcRoot: AQC_DEFAULT,
     projectsRoot: join(drive, 'PQueiroz Studio', 'Projetos'),

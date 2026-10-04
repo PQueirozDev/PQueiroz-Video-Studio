@@ -10,6 +10,7 @@ import { claudePath, clearToolCache, ffmpegPath, ffprobePath, pythonPath, studio
 import { exec } from './util'
 
 const PY_DEPS = ['librosa', 'numpy', 'PIL']
+const IS_WIN = process.platform === 'win32'
 
 export async function checkEnv(id: EnvCheck['id']): Promise<EnvCheck> {
   switch (id) {
@@ -49,14 +50,14 @@ export async function checkEnv(id: EnvCheck['id']): Promise<EnvCheck> {
       clearToolCache()
       const [ff, fp] = await Promise.all([ffmpegPath(), ffprobePath()])
       if (!ff || !fp) {
-        return { id, label: 'FFmpeg', state: 'erro', detail: `${!ff ? 'ffmpeg' : 'ffprobe'} não encontrado no PATH.`, hint: 'winget install Gyan.FFmpeg, ou informe o caminho em Configurações › FFmpeg.' }
+        return { id, label: 'FFmpeg', state: 'erro', detail: `${!ff ? 'ffmpeg' : 'ffprobe'} não encontrado no PATH.`, hint: IS_WIN ? 'winget install Gyan.FFmpeg, ou informe o caminho em Configurações › FFmpeg.' : 'sudo apt install ffmpeg (ou o gerenciador da sua distro), ou informe o caminho em Configurações › FFmpeg.' }
       }
       return { id, label: 'FFmpeg', state: 'ok', detail: `v${(await ffmpegVersion()) ?? '?'} — ${ff}` }
     }
     case 'claude': {
       const bin = await claudePath()
       if (!bin) {
-        return { id, label: 'Claude', state: 'erro', detail: 'Claude Code (claude.exe) não encontrado.', hint: 'npm install -g @anthropic-ai/claude-code e faça login com "claude".' }
+        return { id, label: 'Claude', state: 'erro', detail: `Claude Code (${IS_WIN ? 'claude.exe' : 'claude'}) não encontrado.`, hint: 'npm install -g @anthropic-ai/claude-code e faça login com "claude".' }
       }
       const r = await exec(bin, ['--version'], { timeoutMs: 20000 })
       if (r.code !== 0) return { id, label: 'Claude', state: 'erro', detail: `claude --version falhou: ${r.stderr.trim().slice(0, 200)}` }
@@ -68,7 +69,7 @@ export async function checkEnv(id: EnvCheck['id']): Promise<EnvCheck> {
         return {
           id, label: 'Python', state: 'aviso',
           detail: 'Python não está instalado. O montar.py (motor do modelo de edição) precisa de Python com librosa, numpy e Pillow.',
-          hint: 'Use "Preparar ambiente Python" (instala via winget e cria um ambiente só do estúdio).'
+          hint: IS_WIN ? 'Use "Preparar ambiente Python" (instala via winget e cria um ambiente só do estúdio).' : 'Instale com: sudo apt install python3 python3-venv — depois use "Preparar ambiente Python".'
         }
       }
       const r = await exec(py, ['-c', `import ${PY_DEPS.join(', ')}; print('ok')`], { timeoutMs: 60000 })
@@ -97,6 +98,10 @@ export async function checkEnv(id: EnvCheck['id']): Promise<EnvCheck> {
 export async function setupPython(): Promise<{ ok: boolean; log: string }> {
   const log: string[] = []
   let py = await systemPython()
+  if (!py && !IS_WIN) {
+    log.push('Python não encontrado. Instale pelo terminal (sudo apt install python3 python3-venv, ou o equivalente da sua distro) e tente de novo.')
+    return { ok: false, log: log.join('\n') }
+  }
   if (!py) {
     log.push('Python não encontrado. Instalando Python 3.12 via winget…')
     const r = await exec('winget', ['install', '-e', '--id', 'Python.Python.3.12', '--scope', 'user', '--silent',
@@ -114,7 +119,11 @@ export async function setupPython(): Promise<{ ok: boolean; log: string }> {
   if (!existsSync(studioVenvPython())) {
     const r = await exec(py, ['-m', 'venv', venvDir], { timeoutMs: 120_000 })
     log.push(r.stderr.trim())
-    if (r.code !== 0) return { ok: false, log: log.join('\n') }
+    if (r.code !== 0) {
+      // Debian/Ubuntu separam o módulo venv do python3.
+      if (!IS_WIN) log.push('Falha ao criar o ambiente. No Debian/Ubuntu instale: sudo apt install python3-venv')
+      return { ok: false, log: log.join('\n') }
+    }
   }
   log.push('Instalando librosa, numpy e Pillow (pode levar alguns minutos)…')
   const pip = await exec(studioVenvPython(), ['-m', 'pip', 'install', '--disable-pip-version-check', 'librosa', 'numpy', 'pillow'], { timeoutMs: 20 * 60_000 })

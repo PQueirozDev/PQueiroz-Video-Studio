@@ -116,7 +116,7 @@ export function SettingsDialog() {
           {tab === 'geral' && (
             <>
               <Section title="Pastas">
-                <FolderField label="Sistema de edição (E:\aqc)" k="aqcRoot" hint="Somente leitura: o estúdio nunca altera os arquivos desta pasta." />
+                <FolderField label="Sistema de edição (aqc)" k="aqcRoot" hint="Somente leitura: o estúdio nunca altera os arquivos desta pasta." />
                 <FolderField label="Pasta dos projetos" k="projectsRoot" />
                 <FolderField label="Pasta de exportação" k="exportRoot" hint="Por padrão, a mesma pasta 'Videos feitos' do fluxo atual." />
                 <FolderField label="Biblioteca de assets" k="assetsRoot" hint="Logos, músicas, fontes, overlays e intros reutilizáveis entre projetos." />
@@ -149,7 +149,7 @@ export function SettingsDialog() {
                 <Field label="Modelo" hint="Vazio usa o padrão do Claude Code. Ex.: opus, sonnet.">
                   <input className={inputClass} placeholder="padrão do Claude Code" value={settings.claudeModel} onChange={(e) => set({ claudeModel: e.target.value })} />
                 </Field>
-                <PathField label="Caminho do claude.exe" k="claudePath" placeholder="detectado automaticamente" />
+                <PathField label="Caminho do Claude Code" k="claudePath" placeholder="detectado automaticamente" />
               </Section>
               <Section title="Skills e fluxo detectados">
                 <div className="space-y-1.5">
@@ -171,8 +171,8 @@ export function SettingsDialog() {
             <>
               <Section title="Status"><CheckRow id="ffmpeg" /></Section>
               <Section title="Caminhos">
-                <PathField label="ffmpeg.exe" k="ffmpegPath" placeholder="detectado no PATH" />
-                <PathField label="ffprobe.exe" k="ffprobePath" placeholder="detectado no PATH" />
+                <PathField label="ffmpeg" k="ffmpegPath" placeholder="detectado no PATH" />
+                <PathField label="ffprobe" k="ffprobePath" placeholder="detectado no PATH" />
               </Section>
             </>
           )}
@@ -191,7 +191,7 @@ export function SettingsDialog() {
                   hint="Vídeos 4K, HEVC ou com bitrate alto ganham uma cópia 540p só para o preview. Edições e renders sempre usam o original." />
               </Section>
               <Section title="Ambiente Python (montar.py)">
-                <PathField label="python.exe" k="pythonPath" placeholder="ambiente do estúdio ou Python do sistema" />
+                <PathField label="Python" k="pythonPath" placeholder="ambiente do estúdio ou Python do sistema" />
                 {checks.length > 0 && <EnvChecklist ids={['python']} checks={checks} onChange={setChecks} />}
               </Section>
             </>

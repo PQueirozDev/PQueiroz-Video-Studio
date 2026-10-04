@@ -8,7 +8,7 @@ import { Logo, Progress } from './ui'
 export let startupChecks: EnvCheck[] = []
 
 const STEPS: { id: EnvCheck['id']; text: string }[] = [
-  { id: 'aqc', text: 'Verificando E:\\aqc...' },
+  { id: 'aqc', text: 'Verificando sistema de edição...' },
   { id: 'skills', text: 'Carregando Skills...' },
   { id: 'ffmpeg', text: 'Verificando FFmpeg...' },
   { id: 'python', text: 'Verificando Python...' },

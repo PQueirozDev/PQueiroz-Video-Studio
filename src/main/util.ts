@@ -36,16 +36,24 @@ export function exec(cmd: string, args: string[], opts: SpawnOptions & { timeout
   })
 }
 
+/** Fora do Windows, processos longos ganham um grupo próprio para o killTree alcançar os filhos. */
+export const ownGroup = process.platform !== 'win32'
+
 /** Encerra o processo e todos os filhos (no Windows, ffmpeg/python lançados pelo Claude). */
 export function killTree(pid: number | undefined): void {
   if (!pid) return
   if (process.platform === 'win32') {
     spawn('taskkill', ['/PID', String(pid), '/T', '/F'], { windowsHide: true })
   } else {
+    // Os filhos são criados com `detached` (grupo próprio), então -pid encerra o grupo inteiro.
     try {
       process.kill(-pid, 'SIGTERM')
     } catch {
-      /* já terminou */
+      try {
+        process.kill(pid, 'SIGTERM')
+      } catch {
+        /* já terminou */
+      }
     }
   }
 }

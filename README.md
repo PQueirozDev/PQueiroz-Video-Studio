@@ -13,6 +13,8 @@ Importe os clipes, peça a edição em português e acompanhe cada versão, do p
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-6b7280?style=flat-square)](LICENSE)
 
 [**⬇ Baixar para Windows**](https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases/latest/download/PQueiroz-Video-Studio-Setup.exe) ·
+[**⬇ Linux (.AppImage)**](https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases/latest/download/PQueiroz-Video-Studio.AppImage) ·
+[Linux (.deb)](https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases/latest/download/PQueiroz-Video-Studio.deb) ·
 [Site](https://pqueirozdev.github.io/PQueiroz-Video-Studio) ·
 [Novidades](https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases)
 
@@ -77,9 +79,9 @@ Você ──► chat do Video Studio ──► Claude Code (sua assinatura)
 
 ## Requisitos
 
-- Windows 10/11 (x64)
+- Windows 10/11 (x64) ou Linux x64 (AppImage ou .deb para Ubuntu/Debian)
 - [Claude Code](https://docs.claude.com/claude-code) instalado e logado (`claude`)
-- [FFmpeg](https://www.gyan.dev/ffmpeg/builds/) no PATH (`winget install Gyan.FFmpeg`)
+- [FFmpeg](https://www.gyan.dev/ffmpeg/builds/) no PATH (Windows: `winget install Gyan.FFmpeg` · Linux: `sudo apt install ffmpeg`)
 - Opcional: Python com librosa, numpy e Pillow para fluxos baseados em script — o onboarding verifica tudo e mostra o que falta.
 
 ## Desenvolvimento
