@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PQueiroz Video Studio</title>
+  <meta name="description" content="PQueiroz Video Studio: edição de vídeo conversando com o Claude. Importe os clipes, peça a edição em português, acompanhe cada versão e renderize. Open source, para Windows." />
+  <meta property="og:title" content="PQueiroz Video Studio: edite vídeos conversando com o Claude" />
+  <meta property="og:description" content="Projetos, preview, chat com plano de edição, versões, timeline e render num app desktop open source. Usa o Claude Code pela sua assinatura." />
+  <meta property="og:image" content="https://pqueiroz-video-studio.vercel.app/assets/og-cover.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pqueiroz-video-studio.vercel.app/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://pqueiroz-video-studio.vercel.app/assets/og-cover.png" />
+  <meta name="theme-color" content="#09090c" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="PQueiroz Video Studio, início">
+      <img src="assets/icon.svg" alt="" width="26" height="26" />
+      <span>PQueiroz <b>Video Studio</b></span>
+    </a>
+    <nav class="nav" aria-label="Seções">
+      <a href="#fluxo">fluxo</a>
+      <a href="#telas">telas</a>
+      <a href="#recursos">recursos</a>
+      <a href="#uso">uso do claude</a>
+      <a href="#seguranca">segurança</a>
+      <a href="#codigo">código</a>
+    </nav>
+    <div class="actions">
+      <a class="btn-ghost" data-link="repo" href="https://github.com/PQueirozDev/PQueiroz-Video-Studio" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <span>GitHub</span>
+      </a>
+      <a class="btn" href="#download">Download</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="top" class="hero">
+      <div class="hero-copy">
+        <p class="kicker"><span class="dot"></span> v<span data-version>0.2.0</span> · open source · Windows</p>
+        <h1>Edite vídeos<br /><span class="grad">conversando.</span></h1>
+        <p class="lede">Importe os clipes, peça a edição em português e acompanhe o Claude trabalhando. Cada resultado vira uma versão, do preview ao render, tudo no seu PC e com a sua assinatura.</p>
+        <div class="cta">
+          <a class="btn big" data-link="download" href="https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases/latest/download/PQueiroz-Video-Studio-Setup.exe">Baixar para Windows <span class="mono">.exe</span></a>
+          <a class="btn-ghost big" href="#fluxo">Como funciona</a>
+        </div>
+        <ul class="facts mono">
+          <li>Claude Code pela assinatura</li><li>sem API key</li><li>original nunca muda</li>
+        </ul>
+      </div>
+      <figure class="window hero-shot">
+        <div class="win-bar">
+          <span class="lights"><i></i><i></i><i></i></span>
+          <span class="win-title">PQueiroz Video Studio · Reels — Loja Aurora</span>
+          <span class="win-meta">dados de exemplo</span>
+        </div>
+        <img src="assets/workspace.webp" width="1440" height="900" alt="Tela do projeto no PQueiroz Video Studio: lista de projetos, preview da versão V2, chat com o Claude com um plano de edição e a biblioteca de mídia." />
+      </figure>
+    </section>
+
+    <!-- Fluxo animado -->
+    <section id="fluxo" class="section">
+      <div class="sec-head">
+        <p class="eyebrow">fluxo</p>
+        <h2>Você pede. O Claude edita. O estúdio guarda.</h2>
+        <p class="sub">O app não reinventa a edição: ele roda o Claude Code com as regras do seu <code>CLAUDE.md</code> e os seus scripts, mostra cada passo e transforma o resultado numa versão.</p>
+      </div>
+      <div class="flow">
+        <ol class="pipe" data-pipe>
+          <li data-step="pedido"><span class="p-ico">✎</span><b>Pedido</b><em>em português</em></li>
+          <li data-step="claude"><span class="p-ico claude">✳</span><b>Claude Code</b><em>pela assinatura</em></li>
+          <li data-step="fluxo"><span class="p-ico">❖</span><b>Seu fluxo</b><em>CLAUDE.md · skills</em></li>
+          <li data-step="ffmpeg"><span class="p-ico">▶</span><b>FFmpeg</b><em>cortes, áudio, render</em></li>
+          <li data-step="versao"><span class="p-ico">◆</span><b>Versão</b><em>V1, V2, V3…</em></li>
+        </ol>
+        <div class="console">
+          <div class="win-bar"><span class="lights"><i></i><i></i><i></i></span><span class="win-title">chat · Claude AI</span><span class="win-meta" data-scene-name>Reel de loja</span></div>
+          <div class="console-body">
+            <div class="msg me" data-req>Junte os clipes, tire as partes paradas e deixe pronto para Reels.</div>
+            <div class="status"><span class="spin"></span><span data-status>Claude está analisando os vídeos...</span></div>
+            <div class="bar"><i data-progress></i></div>
+            <ol class="log mono" data-log></ol>
+          </div>
+          <div class="scenes" role="group" aria-label="Exemplos de pedido">
+            <button type="button" class="chip on" data-scene="reel" aria-pressed="true">reel de loja</button>
+            <button type="button" class="chip" data-scene="audio" aria-pressed="false">música alta</button>
+            <button type="button" class="chip" data-scene="story" aria-pressed="false">versão story</button>
+            <button type="button" class="chip" data-scene="voltar" aria-pressed="false">voltar versão</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galeria -->
+    <section id="telas" class="section">
+      <div class="sec-head">
+        <p class="eyebrow">por dentro</p>
+        <h2>O app de verdade, com dados de exemplo.</h2>
+      </div>
+      <div class="gallery">
+        <div class="tabs" role="tablist" aria-label="Telas do app">
+          <button role="tab" class="tab on" aria-selected="true" data-shot="workspace" data-cap="Projeto: preview da versão atual, chat com plano de edição e biblioteca de mídia.">Projeto</button>
+          <button role="tab" class="tab" aria-selected="false" data-shot="timeline" data-cap="Timeline: corte início e fim com I/O no player, reordene e monte uma nova versão.">Timeline</button>
+          <button role="tab" class="tab" aria-selected="false" data-shot="versoes" data-cap="Versões: cada resultado guardado com o pedido que o gerou. O original nunca muda.">Versões</button>
+          <button role="tab" class="tab" aria-selected="false" data-shot="uso-claude" data-cap="Uso do Claude: janelas de 5 horas e da semana, como no Qyrex.">Uso do Claude</button>
+          <button role="tab" class="tab" aria-selected="false" data-shot="fila-render" data-cap="Render: fila com progresso real, GPU (NVENC) com fallback para CPU.">Render</button>
+          <button role="tab" class="tab" aria-selected="false" data-shot="dashboard" data-cap="Projetos: miniatura, duração, status e última modificação.">Projetos</button>
+          <button role="tab" class="tab" aria-selected="false" data-shot="comandos" data-cap="Ctrl K: comandos, projetos e versões pelo teclado.">Ctrl K</button>
+        </div>
+        <figure class="window">
+          <div class="win-bar"><span class="lights"><i></i><i></i><i></i></span><span class="win-title" data-shot-title>Projeto</span><span class="win-meta">1440 × 900</span></div>
+          <img data-shot-img src="assets/workspace.webp" width="1440" height="900" loading="lazy" alt="Tela do app" />
+        </figure>
+        <p class="caption" data-shot-cap>Projeto: preview da versão atual, chat com plano de edição e biblioteca de mídia.</p>
+      </div>
+    </section>
+
+    <!-- Recursos -->
+    <section id="recursos" class="section">
+      <div class="sec-head">
+        <p class="eyebrow">recursos</p>
+        <h2>Da pasta de clipes ao vídeo final, numa janela.</h2>
+      </div>
+      <div class="grid">
+        <article class="cell"><p class="ck">✳ chat</p><h3>Plano de edição</h3><p>Para pedidos grandes, o Claude propõe um plano em passos. Um clique em <b>Executar edição</b> aprova; ou escreva o que ajustar.</p></article>
+        <article class="cell"><p class="ck">◆ versões</p><h3>Nada se perde</h3><p>Todo vídeo novo vira V1, V2, V3… com o pedido e o resumo. Visualize, restaure, duplique ou compare <b>Original | Editado</b>.</p></article>
+        <article class="cell"><p class="ck">✂ timeline</p><h3>Cortes sem destruir</h3><p>Marque início e fim com <kbd>I</kbd> e <kbd>O</kbd>, arraste para reordenar e monte uma versão com a trilha por baixo.</p></article>
+        <article class="cell"><p class="ck">◷ status</p><h3>Veja o Claude trabalhar</h3><p>"Analisando os vídeos...", "Processando áudio...", "Renderizando prévia..." direto das ferramentas que ele usa, com o log de cada ação.</p></article>
+        <article class="cell"><p class="ck">⚙ presets</p><h3>Seu jeito de editar</h3><p>Reel rápido, Reel profissional, Story, YouTube, Antes e Depois, ou presets próprios com instruções que entram em todo pedido.</p></article>
+        <article class="cell"><p class="ck">▣ assets</p><h3>Biblioteca da marca</h3><p>Logos, músicas, fontes, overlays, intros e finalizações compartilhados entre projetos. Arraste para guardar; um clique para usar.</p></article>
+        <article class="cell"><p class="ck">▶ render</p><h3>Fila que não trava</h3><p>MP4 ou MOV de 1080p a 4K, quatro níveis de qualidade, NVENC com fallback para CPU e notificação quando termina.</p></article>
+        <article class="cell"><p class="ck">◐ proxies</p><h3>4K sem engasgar</h3><p>Vídeos 4K, HEVC ou pesados ganham uma cópia 540p só para o preview. Edição e render sempre usam o original.</p></article>
+        <article class="cell"><p class="ck">⌘ teclado</p><h3>Tudo pelo Ctrl K</h3><p>Novo projeto, importar, renderizar, restaurar versão, falar com o Claude. Autosave e o último projeto reabre sozinho.</p></article>
+      </div>
+    </section>
+
+    <!-- Uso do Claude -->
+    <section id="uso" class="section usage-sec">
+      <div class="usage-copy">
+        <p class="eyebrow">uso do claude</p>
+        <h2>Quanto da assinatura sobrou, sempre à vista.</h2>
+        <p class="sub">Como no <a href="https://qyrexapp.vercel.app" target="_blank" rel="noopener noreferrer">Qyrex</a>: o estúdio lê o <code>/usage</code> do Claude Code (sem gastar nada) e atualiza ao vivo com os eventos de limite que chegam durante cada pedido. A porcentagem da janela de 5 horas fica na barra de título; um clique abre os detalhes.</p>
+        <ul class="ticks">
+          <li>janelas de 5 horas e da semana, com contagem até o reset</li>
+          <li>plano e conta do Claude Code conectado</li>
+          <li>memória usada pelo app, ao lado</li>
+        </ul>
+      </div>
+      <div class="usage-card" aria-label="Exemplo do cartão de uso do Claude">
+        <div class="uc-head"><span class="uc-ico">✳</span><b>Claude Code</b><span class="uc-plan mono">pro</span><span class="uc-live mono"><i></i>ao vivo</span></div>
+        <div class="uc-big"><span class="mono" data-usage-big>42</span><em>%</em><span class="uc-reset mono" data-usage-reset>◷ 3h 12m</span></div>
+        <p class="uc-sub mono">uso 5h · <b>semana <span data-usage-week>31</span>%</b></p>
+        <div class="uc-row"><span>5 horas</span><span class="mono" data-usage-a>42%</span></div>
+        <div class="uc-bar"><i data-usage-bar-a style="width:42%"></i></div>
+        <div class="uc-row"><span>Semana</span><span class="mono" data-usage-b>31%</span></div>
+        <div class="uc-bar"><i data-usage-bar-b style="width:31%"></i></div>
+        <p class="uc-foot mono">ler o uso não gasta a assinatura</p>
+      </div>
+    </section>
+
+    <!-- Segurança -->
+    <section id="seguranca" class="section">
+      <div class="sec-head">
+        <p class="eyebrow">segurança</p>
+        <h2>Seus arquivos, intactos.</h2>
+        <p class="sub">O estúdio trabalha com cópias e nunca apaga o que é seu.</p>
+      </div>
+      <dl class="spec">
+        <div><dt>originais</dt><dd>A importação copia para o projeto. O arquivo de origem nunca é movido nem alterado, e nada é sobrescrito: nomes repetidos ganham <code>(2)</code>.</dd></div>
+        <div><dt>seu fluxo</dt><dd>A pasta do seu sistema de edição é somente leitura. Ajustes necessários são aplicados na cópia de cada projeto.</dd></div>
+        <div><dt>comandos</dt><dd>Processos rodam com <code>spawn</code>, argumentos em lista e sem shell. <code>rm -rf</code>, <code>del</code> e <code>Remove-Item</code> ficam bloqueados para o Claude.</dd></div>
+        <div><dt>versões</dt><dd>Cada resultado é uma cópia imutável em <code>versions/</code>. Restaurar só muda qual versão está ativa.</dd></div>
+        <div><dt>janela</dt><dd><code>contextIsolation</code>, CSP restritiva e um protocolo de mídia que só serve arquivos das pastas do estúdio.</dd></div>
+        <div><dt>updates</dt><dd>Atualização automática pelo GitHub Releases, com SHA-512 conferido pelo electron-updater e sem downgrade.</dd></div>
+      </dl>
+    </section>
+
+    <!-- Código -->
+    <section id="codigo" class="section code-sec">
+      <div class="code-copy">
+        <p class="eyebrow">código aberto</p>
+        <h2>Leia, rode, mude.</h2>
+        <p class="sub">Electron, React e TypeScript strict, com SQLite nativo do Node (sem módulo para compilar) e FFmpeg. Feito para o meu fluxo de vídeos, aberto para quem quiser adaptar ao seu.</p>
+        <ul class="stack mono">
+          <li>Electron</li><li>React 19</li><li>TypeScript</li><li>Vite</li><li>Tailwind 4</li><li>Zustand</li><li>node:sqlite</li><li>FFmpeg</li><li>Claude Code</li>
+        </ul>
+      </div>
+      <div class="window term">
+        <div class="win-bar"><span class="lights"><i></i><i></i><i></i></span><span class="win-title">PowerShell</span><button type="button" class="copy" data-copy>copiar</button></div>
+<pre class="mono" data-copy-src><span class="dim"># Node.js 22+ no Windows, FFmpeg e Claude Code instalados</span>
+git clone https://github.com/PQueirozDev/PQueiroz-Video-Studio
+cd PQueiroz-Video-Studio
+npm install
+npm run dev     <span class="dim"># Vite + Electron com hot reload</span>
+npm run dist    <span class="dim"># instalador em dist/</span></pre>
+      </div>
+    </section>
+
+    <!-- Download -->
+    <section id="download" class="section dl-sec">
+      <img class="dl-icon" src="assets/icon.svg" alt="" width="88" height="88" />
+      <p class="eyebrow">download · v<span data-version>0.2.0</span></p>
+      <h2 class="dl-title">Comece pelo próximo vídeo.</h2>
+      <p class="sub">Instalador para Windows 10 e 11 (x64). Na primeira abertura o estúdio verifica Claude Code, FFmpeg e o seu fluxo, e mostra exatamente o que falta. Depois, ele se atualiza sozinho.</p>
+      <div class="cta center">
+        <a class="btn big" data-link="download" href="https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases/latest/download/PQueiroz-Video-Studio-Setup.exe">Baixar para Windows <span class="mono">.exe</span></a>
+        <a class="btn-ghost big" data-link="releases" href="https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases" target="_blank" rel="noopener noreferrer">Todas as versões</a>
+      </div>
+      <p class="fine mono">requer Claude Code logado e FFmpeg · macOS e Linux: compile a partir do código</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span class="brand small"><img src="assets/icon.svg" alt="" width="18" height="18" /> PQueiroz Video Studio</span>
+    <span class="mono dim">© 2026 <a href="https://pqueiroz.vercel.app" target="_blank" rel="noopener noreferrer">Pedro Queiroz</a> · MIT</span>
+    <a class="mono" data-link="repo" href="https://github.com/PQueirozDev/PQueiroz-Video-Studio" target="_blank" rel="noopener noreferrer">github</a>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
