@@ -29,7 +29,7 @@ body {
   font: 16px/1.6 var(--sans);
   -webkit-font-smoothing: antialiased;
 }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; }
 code { font-family: var(--mono); font-size: .88em; background: #ffffff10; padding: 1px 6px; border-radius: 6px; }
 kbd { font-family: var(--mono); font-size: .8em; border: 1px solid var(--line-2); border-bottom-width: 2px; padding: 0 6px; border-radius: 5px; background: var(--raised); }
@@ -76,7 +76,8 @@ kbd { font-family: var(--mono); font-size: .8em; border: 1px solid var(--line-2)
 .btn .mono { opacity: .7; font-weight: 500; font-size: 13px; }
 
 /* hero */
-.hero { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.4fr); gap: 48px; align-items: center; padding: 72px 0 56px; }
+.hero { display: grid; grid-template-columns: 1fr; gap: 56px; padding: 80px 0 64px; }
+.hero-copy { max-width: 760px; }
 .kicker { display: inline-flex; align-items: center; gap: 8px; font: 500 13px var(--mono); color: var(--muted); border: 1px solid var(--line-2); border-radius: 999px; padding: 4px 12px; margin: 0 0 22px; background: var(--panel); }
 .kicker .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px #34d39926; }
 h1 { font-size: clamp(42px, 5.6vw, 72px); line-height: 1.02; letter-spacing: -.04em; margin: 0 0 20px; font-weight: 800; }
@@ -94,8 +95,7 @@ h1 { font-size: clamp(42px, 5.6vw, 72px); line-height: 1.02; letter-spacing: -.0
 .lights i:first-child { background: #8b5cf6; }
 .win-title { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .win-meta { margin-left: auto; white-space: nowrap; }
-.hero-shot { transform: perspective(1600px) rotateY(-4deg) rotateX(1deg); transition: transform .5s; }
-.hero-shot:hover { transform: none; }
+.hero-shot { width: 100%; }
 
 /* seções */
 .section { padding: 88px 0; border-top: 1px solid var(--line); }
@@ -206,7 +206,7 @@ h3 { font-size: 18px; margin: 4px 0 8px; letter-spacing: -.01em; }
   .nav { display: none; }
   .hero, .flow, .usage-sec, .code-sec { grid-template-columns: 1fr; }
   .hero { padding-top: 48px; }
-  .hero-shot { transform: none; }
+
   .grid { grid-template-columns: 1fr 1fr; }
   .spec { grid-template-columns: 1fr; }
 }

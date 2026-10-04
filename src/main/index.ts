@@ -16,6 +16,13 @@ if (!app.requestSingleInstanceLock()) app.quit()
 
 let win: BrowserWindow | null = null
 
+const APP_ID = 'com.pqueiroz.videostudio.desktop'
+
+/** .ico com todos os tamanhos: no app instalado fica em resources/, fora do app.asar. */
+function appIcon(): string {
+  return app.isPackaged ? join(process.resourcesPath, 'icon.ico') : join(app.getAppPath(), 'build', 'icon.ico')
+}
+
 interface Bounds { x?: number; y?: number; width: number; height: number; maximized?: boolean }
 
 function loadBounds(): Bounds {
@@ -41,7 +48,7 @@ function createWindow(): void {
     show: false,
     title: 'PQueiroz Video Studio',
     backgroundColor: '#0b0b0f',
-    icon: join(app.getAppPath(), 'build', 'icon.png'),
+    icon: appIcon(),
     titleBarStyle: 'hidden',
     titleBarOverlay: { color: '#0b0b0f', symbolColor: '#a1a1aa', height: 40 },
     webPreferences: {
@@ -75,7 +82,10 @@ app.on('second-instance', () => {
 })
 
 app.whenReady().then(() => {
-  app.setAppUserModelId('com.pqueiroz.videostudio')
+  // Igual ao appId do instalador (o atalho do menu Iniciar usa o mesmo): é o que dá o ícone e o nome
+  // certos na barra de tarefas e nas notificações. Em desenvolvimento usa outro ID, para o Windows
+  // não associar o app ao electron.exe (foi o que fez a barra mostrar o átomo do Electron).
+  app.setAppUserModelId(app.isPackaged ? APP_ID : `${APP_ID}.dev`)
   Menu.setApplicationMenu(null)
   handleMediaProtocol()
   registerIpc()

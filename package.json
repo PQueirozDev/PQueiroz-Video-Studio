@@ -1,7 +1,7 @@
 {
   "name": "pqueiroz-video-studio",
   "productName": "PQueiroz Video Studio",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Central de edição de vídeos assistida por IA: projetos, preview, versões e render, com o Claude Code usando o seu fluxo de edição.",
   "author": "Pedro Queiroz",
   "private": true,
@@ -37,7 +37,7 @@
     "zustand": "^5.0.15"
   },
   "build": {
-    "appId": "com.pqueiroz.videostudio",
+    "appId": "com.pqueiroz.videostudio.desktop",
     "productName": "PQueiroz Video Studio",
     "directories": {
       "output": "dist",
@@ -45,7 +45,6 @@
     },
     "files": [
       "out/**/*",
-      "build/icon.png",
       "package.json"
     ],
     "asar": true,
@@ -62,7 +61,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "PQueiroz Video Studio"
+      "shortcutName": "PQueiroz Video Studio",
+      "guid": "022b7b7a-69d5-56cc-b771-935b23c23d1d"
     },
     "publish": [
       {
@@ -70,6 +70,12 @@
         "owner": "PQueirozDev",
         "repo": "PQueiroz-Video-Studio",
         "releaseType": "release"
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "build/icon.ico",
+        "to": "icon.ico"
       }
     ]
   },
