@@ -13,7 +13,7 @@ Importe os clipes, peça a edição em português e acompanhe cada versão, do p
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-6b7280?style=flat-square)](LICENSE)
 
 [**⬇ Baixar para Windows**](https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases/latest/download/PQueiroz-Video-Studio-Setup.exe) ·
-[Site](https://pqueiroz-video-studio.vercel.app) ·
+[Site](https://pqueirozdev.github.io/PQueiroz-Video-Studio) ·
 [Novidades](https://github.com/PQueirozDev/PQueiroz-Video-Studio/releases)
 
 <br>
