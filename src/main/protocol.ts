@@ -22,7 +22,7 @@ export function registerSchemePrivileges(): void {
   ])
 }
 
-/** Só serve arquivos das pastas do estúdio (projetos, exportação, E:\aqc e dados do app). */
+/** Só serve arquivos das pastas do estúdio (projetos, exportação, sistema de edição e dados do app). */
 function allowed(path: string): boolean {
   const s = getSettings()
   return [s.projectsRoot, s.exportRoot, s.aqcRoot, s.assetsRoot, app.getPath('userData')].some((root) => root && isInside(root, path))

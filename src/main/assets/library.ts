@@ -7,7 +7,7 @@ import { projectPath, requireProject } from '../projects/projects'
 import { getSettings } from '../settings'
 
 // Biblioteca global (logos, músicas, fontes, overlays, intros, finalizações), compartilhada entre projetos.
-// Os recursos de E:\aqc (Recursos/ e as fontes do Modelo edicao) aparecem como somente leitura.
+// Os recursos do sistema de edição (Recursos/ e as fontes do Modelo edicao) aparecem como somente leitura.
 
 export const CATEGORIES: AssetCategory[] = ['logos', 'musicas', 'fontes', 'overlays', 'intros', 'finais']
 const FONT_EXT = ['.ttf', '.otf']
@@ -59,6 +59,7 @@ export function listAssets(): AssetItem[] {
   const out: AssetItem[] = []
   for (const c of CATEGORIES) for (const p of files(join(root, c), allowedExt(c))) out.push(item(c, p, false))
   const aqc = getSettings().aqcRoot
+  if (!aqc) return out
   const recursos = join(aqc, 'Recursos')
   for (const p of files(recursos, EXTENSIONS.audio)) out.push(item('musicas', p, true))
   for (const p of files(recursos, EXTENSIONS.image, 0)) out.push(item(/final|cart|end/i.test(p) ? 'finais' : 'logos', p, true))
@@ -88,7 +89,7 @@ export async function addAssets(category: AssetCategory, paths: string[]): Promi
 export async function useAsset(projectId: string, path: string): Promise<string> {
   const p = validatePath(path)
   const s = getSettings()
-  if (!isInside(s.assetsRoot, p) && !isInside(s.aqcRoot, p)) throw new Error('Asset fora da biblioteca')
+  if (!isInside(s.assetsRoot, p) && !(s.aqcRoot && isInside(s.aqcRoot, p))) throw new Error('Asset fora da biblioteca')
   if (FONT_EXT.includes(extname(p).toLowerCase())) {
     const dest = await safeCopy(p, projectPath(requireProject(projectId), 'assets', 'fonts'))
     return `Fonte copiada para ${dest}`

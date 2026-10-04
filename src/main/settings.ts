@@ -4,17 +4,26 @@ import { join } from 'node:path'
 import type { Settings } from '@shared/types'
 import { all, run } from './db'
 
-// No Windows o sistema de edição fica em E:\aqc; no Linux, em ~/aqc.
 const IS_WIN = process.platform === 'win32'
-const AQC_DEFAULT = IS_WIN ? 'E:\\aqc' : join(homedir(), 'aqc')
+
+/**
+ * O sistema de edição (aqc) é opcional: só vira padrão se a pasta existir neste computador
+ * (E:\aqc ou C:\aqc no PC do Pedro, ~/aqc no Linux). Num computador novo fica vazio até o
+ * usuário escolher uma pasta ou importar um preset que traga o fluxo.
+ */
+function detectAqc(): string {
+  const candidates = IS_WIN ? ['E:\\aqc', 'C:\\aqc', join(homedir(), 'aqc')] : [join(homedir(), 'aqc')]
+  return candidates.find((p) => existsSync(join(p, 'CLAUDE.md')) || existsSync(join(p, 'Modelo edicao'))) ?? ''
+}
 
 function defaults(): Settings {
   const drive = IS_WIN && existsSync('E:\\') ? 'E:\\' : join(homedir(), 'Videos')
+  const aqc = detectAqc()
   return {
-    aqcRoot: AQC_DEFAULT,
+    aqcRoot: aqc,
     projectsRoot: join(drive, 'PQueiroz Studio', 'Projetos'),
-    // Mesmo destino do fluxo atual: os vídeos prontos vão para "Videos feitos".
-    exportRoot: join(AQC_DEFAULT, 'Videos feitos'),
+    // Com o fluxo do Pedro, os vídeos prontos vão para "Videos feitos", como antes.
+    exportRoot: aqc ? join(aqc, 'Videos feitos') : join(drive, 'PQueiroz Studio', 'Exportados'),
     ffmpegPath: '',
     ffprobePath: '',
     claudePath: '',

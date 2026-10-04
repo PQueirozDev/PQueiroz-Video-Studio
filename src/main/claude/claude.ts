@@ -1,5 +1,5 @@
 import { spawn, type ChildProcess } from 'node:child_process'
-import { writeFileSync } from 'node:fs'
+import { existsSync, writeFileSync } from 'node:fs'
 import { delimiter, dirname } from 'node:path'
 import type { ChatMessage, ClaudeEvent, Version } from '@shared/types'
 import { all, run } from '../db'
@@ -128,7 +128,8 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
     '--append-system-prompt-file', ctxFile,
     // Sem isso o CLI congela o prompt do 1º turno e o Claude não veria mídias/versões novas ao retomar.
     '--system-prompt-snapshot', 'off',
-    '--add-dir', s.aqcRoot,
+    // Só dá acesso à pasta do sistema de edição se ela existir neste computador.
+    ...(s.aqcRoot && existsSync(s.aqcRoot) ? ['--add-dir', s.aqcRoot] : []),
     '--permission-mode', 'acceptEdits',
     '--allowedTools', ...ALLOWED_TOOLS,
     '--disallowedTools', ...DENIED_TOOLS,
