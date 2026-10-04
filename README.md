@@ -65,6 +65,7 @@ Você ──► chat do Video Studio ──► Claude Code (sua assinatura)
 - **Uso do Claude na barra de título**, como no [Qyrex](https://github.com/PQueirozDev/Qyrex): lido com `claude -p /usage` (não gasta uso) e atualizado pelos eventos de limite do próprio chat.
 - **Timeline** com cortes não destrutivos (I/O), trilha de áudio e *Montar timeline*.
 - **Presets** (Reel rápido, Reel profissional, Story, YouTube, Antes e Depois…) e presets próprios com instruções para o Claude.
+- **Compartilhar presets:** exporte um `.pqpreset` com o seu sistema de edição (CLAUDE.md, Modelo edicao, skills de vídeo do Claude e, se quiser, as músicas) e importe em outro computador — por arquivo, por link ou pela galeria de [presets da comunidade](presets/).
 - **Biblioteca de assets** compartilhada: logos, músicas, fontes, overlays, intros e finalizações.
 - **Proxies** 540p automáticos para vídeos 4K, HEVC ou pesados (só no preview).
 - **Render** em MP4/MOV, 1080p a 4K, NVENC com fallback para CPU, fila sem travar a interface.

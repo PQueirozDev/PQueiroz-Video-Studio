@@ -16,8 +16,18 @@ export async function checkEnv(id: EnvCheck['id']): Promise<EnvCheck> {
   switch (id) {
     case 'aqc': {
       const info = aqcInfo()
+      if (!info.root) {
+        return {
+          id, label: 'Sistema de edição', state: 'aviso',
+          detail: 'Nenhum sistema de edição neste computador (opcional).',
+          hint: 'Importe um preset que traga o fluxo (Configurações › Presets) ou escolha a pasta com o CLAUDE.md e o "Modelo edicao". Sem isso o Claude edita direto com o FFmpeg.'
+        }
+      }
       if (!info.exists) {
-        return { id, label: 'E:\\aqc', state: 'erro', detail: `Pasta não encontrada: ${info.root}`, hint: 'Ajuste o caminho em Configurações › Geral.' }
+        return {
+          id, label: 'Sistema de edição', state: 'aviso', detail: `Pasta não encontrada: ${info.root}`,
+          hint: 'Escolha outra pasta em "Alterar" ou importe um preset com o fluxo (Configurações › Presets).'
+        }
       }
       if (!info.templateDir) {
         return { id, label: info.root, state: 'aviso', detail: 'Pasta encontrada, mas sem "Modelo edicao/montar.py".' }
@@ -33,10 +43,16 @@ export async function checkEnv(id: EnvCheck['id']): Promise<EnvCheck> {
       const info = aqcInfo()
       const missing = info.workflow.filter((w) => !w.found)
       const hasWorkflow = info.workflow.some((w) => w.kind === 'workflow')
-      if (!hasWorkflow) {
-        return { id, label: 'Video Skills', state: 'erro', detail: 'CLAUDE.md não encontrado em E:\\aqc — o Claude não terá as regras de edição.' }
-      }
       const found = info.workflow.filter((w) => w.found).map((w) => w.name)
+      if (!hasWorkflow) {
+        return {
+          id, label: 'Video Skills', state: 'aviso',
+          detail: found.length
+            ? `${found.length} skill(s) de vídeo do Claude: ${found.join(', ')}. Sem CLAUDE.md de edição.`
+            : 'Nenhuma skill de vídeo nem CLAUDE.md de edição neste computador (opcional).',
+          hint: 'Importe um preset com o fluxo completo (Configurações › Presets › Importar). Os presets embutidos funcionam mesmo sem isso.'
+        }
+      }
       if (missing.length) {
         return {
           id, label: 'Video Skills', state: 'aviso',

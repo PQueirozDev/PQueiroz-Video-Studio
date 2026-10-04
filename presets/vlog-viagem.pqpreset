@@ -1,0 +1,10 @@
+{
+  "kind": "pqueiroz-preset",
+  "version": 1,
+  "name": "Vlog de viagem",
+  "author": "PQueiroz Video Studio",
+  "format": "9:16",
+  "description": "1080×1920, cortes no ritmo da música, cor quente e transições curtas.",
+  "prompt": "Preset \"Vlog de viagem\": 1080×1920, 30 fps, 30–45 s. Monte no ritmo da música (cortes nas batidas), priorize planos com movimento e paisagens, correção de cor quente e levemente saturada, transições curtas (whip/zoom) no máximo a cada 4 cortes, texto com o nome do lugar no início. Áudio ambiente baixo sob a música.",
+  "createdAt": 1791158400000
+}

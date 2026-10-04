@@ -1,0 +1,10 @@
+{
+  "kind": "pqueiroz-preset",
+  "version": 1,
+  "name": "Tutorial / gravação de tela",
+  "author": "PQueiroz Video Studio",
+  "format": "16:9",
+  "description": "1920×1080, remove pausas, zoom onde acontece o clique, legenda opcional.",
+  "prompt": "Preset \"Tutorial\": 1920×1080, 30 fps. Remova pausas e erros de fala, acelere trechos de espera (carregamentos) para 2–4×, aplique zoom suave nas áreas onde há clique ou digitação, mantenha o cursor visível. Música baixa (-28 dB) sob a voz, loudnorm -16 LUFS. Capítulos com títulos curtos quando mudar de assunto.",
+  "createdAt": 1791158400000
+}

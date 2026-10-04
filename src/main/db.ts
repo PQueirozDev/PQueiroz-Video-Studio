@@ -101,7 +101,9 @@ const MIGRATIONS: [table: string, column: string, type: string][] = [
   ['media', 'trim_in', 'REAL'],
   ['media', 'trim_out', 'REAL'],
   ['media', 'in_timeline', 'INTEGER NOT NULL DEFAULT 1'],
-  ['media', 'proxy', 'TEXT']
+  ['media', 'proxy', 'TEXT'],
+  ['presets', 'author', "TEXT NOT NULL DEFAULT ''"],
+  ['presets', 'workflow_dir', 'TEXT']
 ]
 
 function migrate(d: DatabaseSync): void {

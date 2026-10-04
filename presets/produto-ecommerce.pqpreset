@@ -1,0 +1,10 @@
+{
+  "kind": "pqueiroz-preset",
+  "version": 1,
+  "name": "Vídeo de produto (e-commerce)",
+  "author": "PQueiroz Video Studio",
+  "format": "1:1",
+  "description": "1080×1080, produto em destaque, preço e chamada final.",
+  "prompt": "Preset \"Produto\": 1080×1080, 15–25 s. Abra com o produto em destaque nos primeiros 2 s, mostre detalhes em closes com zoom suave, textos curtos com benefícios (máx. 5 palavras por tela), cartão final com nome do produto e chamada para ação. Não invente preço nem dados do produto — pergunte. Música animada, loudnorm -14 LUFS.",
+  "createdAt": 1791158400000
+}

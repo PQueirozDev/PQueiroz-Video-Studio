@@ -1,0 +1,40 @@
+{
+  "presets": [
+    {
+      "id": "cortes-podcast",
+      "name": "Cortes de podcast",
+      "author": "PQueiroz Video Studio",
+      "format": "9:16",
+      "description": "1080×1920, cortes de 30–60 s com legenda grande palavra a palavra.",
+      "file": "cortes-podcast.pqpreset",
+      "hasWorkflow": false
+    },
+    {
+      "id": "tutorial-tela",
+      "name": "Tutorial / gravação de tela",
+      "author": "PQueiroz Video Studio",
+      "format": "16:9",
+      "description": "1920×1080, remove pausas, zoom onde acontece o clique, legenda opcional.",
+      "file": "tutorial-tela.pqpreset",
+      "hasWorkflow": false
+    },
+    {
+      "id": "vlog-viagem",
+      "name": "Vlog de viagem",
+      "author": "PQueiroz Video Studio",
+      "format": "9:16",
+      "description": "1080×1920, cortes no ritmo da música, cor quente e transições curtas.",
+      "file": "vlog-viagem.pqpreset",
+      "hasWorkflow": false
+    },
+    {
+      "id": "produto-ecommerce",
+      "name": "Vídeo de produto (e-commerce)",
+      "author": "PQueiroz Video Studio",
+      "format": "1:1",
+      "description": "1080×1080, produto em destaque, preço e chamada final.",
+      "file": "produto-ecommerce.pqpreset",
+      "hasWorkflow": false
+    }
+  ]
+}

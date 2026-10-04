@@ -30,7 +30,7 @@ export function Splash() {
         if (!alive) return
         const s = STEPS[i]
         setStep(i)
-        setText(s.id === 'aqc' ? `Verificando ${useStore.getState().settings?.aqcRoot}...` : s.text)
+        setText(s.id === 'aqc' && useStore.getState().settings?.aqcRoot ? `Verificando ${useStore.getState().settings?.aqcRoot}...` : s.text)
         results.push(await api.env.check(s.id))
         if (s.id === 'workspace') await store.loadProjects()
       }

@@ -5,7 +5,8 @@ import type { AqcInfo, SkillInfo } from '@shared/types'
 import { EXTENSIONS } from '../files'
 import { getSettings } from '../settings'
 
-// Descobre o fluxo de edição existente em E:\aqc sem alterar nada lá (somente leitura).
+// Descobre o fluxo de edição existente (pasta configurada em aqcRoot) sem alterar nada lá (somente leitura).
+// aqcRoot vazio = nenhum sistema de edição neste computador; só as skills de ~/.claude/skills são lidas.
 
 const VIDEO_HINT = /v[ií]deo|video|edi[çc][aã]o|edit|ffmpeg|reel|montag/i
 
@@ -41,10 +42,11 @@ function skillDescription(file: string): string {
 }
 
 function skillDirs(aqc: string): string[] {
-  return [join(homedir(), '.claude', 'skills'), join(aqc, '.claude', 'skills')]
+  return aqc ? [join(homedir(), '.claude', 'skills'), join(aqc, '.claude', 'skills')] : [join(homedir(), '.claude', 'skills')]
 }
 
-function scanSkills(aqc: string): SkillInfo[] {
+/** Skills de vídeo instaladas (de ~/.claude/skills e da pasta do sistema de edição). */
+export function scanSkills(aqc: string): SkillInfo[] {
   const out: SkillInfo[] = []
   for (const dir of skillDirs(aqc)) {
     for (const name of list(dir)) {
@@ -76,15 +78,20 @@ function referencedSkills(claudeMd: string, aqc: string): SkillInfo[] {
 }
 
 export function templateDir(aqc = getSettings().aqcRoot): string | null {
+  if (!aqc) return null
   const dir = join(aqc, 'Modelo edicao')
   return existsSync(join(dir, 'montar.py')) ? dir : null
 }
 
 export function aqcInfo(): AqcInfo {
   const root = getSettings().aqcRoot
-  const exists = isDir(root)
+  const exists = Boolean(root) && isDir(root)
   const info: AqcInfo = { root, exists, workflow: [], musicCount: 0, doneVideos: [], pendingJobs: [], templateDir: null, stalePaths: [] }
-  if (!exists) return info
+  if (!exists) {
+    // Mesmo sem sistema de edição, as skills de vídeo do Claude continuam valendo.
+    info.workflow.push(...scanSkills(''))
+    return info
+  }
 
   const claudeMdPath = join(root, 'CLAUDE.md')
   const claudeMd = safeRead(claudeMdPath)

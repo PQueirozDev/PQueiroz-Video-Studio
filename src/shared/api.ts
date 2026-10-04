@@ -1,6 +1,6 @@
 import type {
   AqcInfo, AssetCategory, AssetItem, ChatMessage, ClaudeUsage, UpdateState, ClaudeEvent, EditTimeline, EnvCheck, ImportResult, MediaItem,
-  NewProjectInput, Preset, PresetInput, Project, RenderJob, RenderSettings, Settings, Version
+  CommunityPreset, NewProjectInput, Preset, PresetExportOptions, PresetImportResult, PresetInput, Project, RenderJob, RenderSettings, Settings, Version
 } from './types'
 
 /** Superfície exposta pelo preload em `window.studio`. */
@@ -76,6 +76,15 @@ export interface StudioApi {
     list(): Promise<Preset[]>
     save(id: string | null, input: PresetInput): Promise<Preset>
     remove(id: string): Promise<void>
+    /** Salva o preset num arquivo .pqpreset escolhido pelo usuário. null = cancelado. */
+    exportToFile(id: string, options: PresetExportOptions): Promise<string | null>
+    /** Abre um .pqpreset do disco. null = cancelado. */
+    importFromFile(): Promise<PresetImportResult | null>
+    importFromUrl(url: string): Promise<PresetImportResult>
+    community(): Promise<CommunityPreset[]>
+    installCommunity(item: CommunityPreset): Promise<PresetImportResult>
+    /** Usa a pasta do fluxo que veio com o preset como sistema de edição. */
+    useWorkflow(id: string): Promise<Settings>
   }
   app: {
     toMediaUrl(path: string): string
