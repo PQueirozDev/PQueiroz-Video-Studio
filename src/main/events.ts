@@ -4,4 +4,4 @@ import { EventEmitter } from 'node:events'
 export const bus = new EventEmitter()
 
 export interface MediaChanged { projectId: string }
-export interface TaskProgress { projectId: string; task: 'montagem'; text: string; progress: number | null; done?: boolean; error?: string }
+export interface TaskProgress { projectId: string; task: 'montagem' | 'animacao' | 'analise' | 'transcricao' | 'download'; text: string; progress: number | null; done?: boolean; error?: string }

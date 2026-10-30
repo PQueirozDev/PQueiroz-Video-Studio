@@ -5,6 +5,8 @@ export type Resolution = '1080p' | '1440p' | '4k'
 export type FpsOption = 'original' | '24' | '30' | '60'
 export type MediaKind = 'video' | 'audio' | 'image'
 export type ProjectStatus = 'novo' | 'editando' | 'pronto' | 'renderizado'
+/** video = Video Studio; image = Image Studio (artes com camadas). */
+export type ProjectKind = 'video' | 'image'
 
 export interface Settings {
   aqcRoot: string
@@ -28,6 +30,8 @@ export interface Settings {
 
 export interface Project {
   id: string
+  kind: ProjectKind
+  brandId: string | null
   name: string
   path: string
   format: AspectFormat
@@ -49,6 +53,8 @@ export interface NewProjectInput {
   resolution: Resolution
   fps: FpsOption
   preset: string
+  kind?: ProjectKind
+  brandId?: string | null
 }
 
 export interface MediaItem {
@@ -93,6 +99,7 @@ export interface ChatMessage {
 }
 
 export interface Version {
+  favorite: boolean
   id: string
   projectId: string
   number: number
@@ -111,12 +118,15 @@ export type ClaudeEvent =
   | { type: 'status'; projectId: string; text: string }
   | { type: 'text'; projectId: string; messageId: string; text: string }
   | { type: 'activity'; projectId: string; messageId: string; text: string }
-  | { type: 'done'; projectId: string; message: ChatMessage; versions: Version[]; costUsd?: number }
+  | { type: 'done'; projectId: string; message: ChatMessage; versions: Version[]; costUsd?: number; designChanged?: boolean }
   | { type: 'error'; projectId: string; error: string }
 
 export type RenderQuality = 'rapida' | 'equilibrada' | 'alta' | 'maxima'
 
 export interface RenderSettings {
+  /** Preset de exportação (src/shared/exportPresets.ts): define proporção, tamanho, encaixe e limite de arquivo. */
+  presetId?: string
+  subtitles?: SubtitleDocument
   container: 'mp4' | 'mov'
   resolution: Resolution
   fps: 'original' | '30' | '60'
@@ -126,6 +136,9 @@ export interface RenderSettings {
 export type RenderStatus = 'aguardando' | 'renderizando' | 'concluido' | 'erro' | 'cancelado'
 
 export interface RenderJob {
+  remainingSeconds?: number | null
+  estimatedBytes?: number | null
+  notice?: string | null
   id: string
   projectId: string
   projectName: string
@@ -184,6 +197,16 @@ export interface EditTimeline {
   cuts: number[]
   segments: string[]
   duration: number
+}
+
+export interface TimelineState {
+  undo: boolean
+  redo: boolean
+}
+export interface SubtitleCue { id: string; start: number; end: number; text: string }
+export interface SubtitleDocument {
+  cues: SubtitleCue[]
+  style: { size: number; color: string; position: 'bottom' | 'center' | 'top' }
 }
 
 export type AssetCategory = 'logos' | 'musicas' | 'fontes' | 'overlays' | 'intros' | 'finais'

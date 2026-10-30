@@ -1,6 +1,6 @@
 import { CheckCircle2, Clock, FolderOpen, ListVideo, X, XCircle } from 'lucide-react'
 import type { RenderJob } from '@shared/types'
-import { api, fmtAgo } from '@/lib/format'
+import { api, fmtAgo, fmtTimePrecise } from '@/lib/format'
 import { useStore } from '@/store'
 import { Badge, Button, Dialog, Empty, IconButton, Progress } from './ui'
 
@@ -17,7 +17,7 @@ function StatusText({ job }: { job: RenderJob }) {
 }
 
 export function RenderQueue() {
-  const { dialog, setDialog, renders } = useStore()
+  const { dialog, setDialog, renders, toast } = useStore()
   const open = dialog === 'queue'
 
   const clear = async (): Promise<void> => {
@@ -29,7 +29,7 @@ export function RenderQueue() {
     <Dialog
       open={open}
       onClose={() => setDialog(null)}
-      title="Render Queue"
+      title="Fila de exportação"
       subtitle="Os renders rodam em processos separados — pode continuar usando o estúdio."
       width={640}
       footer={<Button variant="ghost" onClick={clear} disabled={!renders.some((r) => ['concluido', 'erro', 'cancelado'].includes(r.status))}>Limpar finalizados</Button>}
@@ -58,8 +58,14 @@ export function RenderQueue() {
                 {j.status === 'concluido' && (
                   <IconButton title="Mostrar na pasta" onClick={() => api.render.reveal(j.id)}><FolderOpen className="h-3.5 w-3.5" /></IconButton>
                 )}
+                {['erro', 'cancelado'].includes(j.status) && <Button size="sm" onClick={async () => { try { await api.render.retry(j.id); toast('Render adicionado novamente à fila', 'ok') } catch (err) { toast((err as Error).message, 'bad') } }}>Tentar novamente</Button>}
               </div>
               {j.status === 'renderizando' && <Progress value={j.progress} className="mt-2" />}
+              {(j.remainingSeconds != null || j.estimatedBytes != null) && <p className="mt-2 flex gap-4 pl-7 font-mono text-[11px] text-muted">
+                {j.status === 'renderizando' && j.remainingSeconds != null && <span>≈ {fmtTimePrecise(j.remainingSeconds)} restantes</span>}
+                {j.estimatedBytes != null && <span>{j.status === 'concluido' ? 'Tamanho' : 'Tamanho estimado'}: {(j.estimatedBytes / 1048576).toFixed(1)} MB</span>}
+              </p>}
+              {j.notice && <p className="mt-2 rounded-md bg-warn/10 px-2 py-1.5 text-[11px] text-warn">{j.notice}</p>}
               {j.status === 'concluido' && <p className="selectable mt-1 truncate pl-7 font-mono text-[10.5px] text-faint">{j.output}</p>}
               {j.error && <pre className="selectable mt-2 max-h-24 overflow-auto whitespace-pre-wrap rounded bg-bg p-2 font-mono text-[10.5px] text-bad">{j.error}</pre>}
             </div>

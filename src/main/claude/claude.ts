@@ -11,8 +11,12 @@ import { killTree, now, ownGroup, uid } from '../util'
 import { listVersions, restoreVersion, snapshotOutputs } from '../versions/versions'
 import { prepareEditFolder } from '../skills/template'
 import { buildContext } from './context'
+import { buildImageContext } from '../image/context'
+import { captureDesignState, lockDesign, restoreImageVersion, snapshotDesign } from '../image/imageProjects'
 import { describeTool } from './status'
 import { applyRateLimitEvent } from './usage'
+import { openAgentSession } from '../agent/bridge'
+import { mcpServerPath } from '../agent/paths'
 
 // Cada pedido do chat roda o Claude Code (claude) em modo não interativo, num processo
 // separado, com a pasta do projeto como diretório de trabalho. A sessão é retomada a cada
@@ -26,8 +30,12 @@ interface Running {
 }
 
 const running = new Map<string, Running>()
+/** Reservado assim que o pedido chega (antes dos awaits), para dois envios não rodarem juntos. */
+const starting = new Set<string>()
 
 const ALLOWED_TOOLS = ['Bash', 'PowerShell', 'Read', 'Write', 'Edit', 'MultiEdit', 'Glob', 'Grep', 'TodoWrite']
+// No Image Studio o Claude só precisa ler/editar arquivos do projeto: sem shell.
+const IMAGE_TOOLS = ['Read', 'Write', 'Edit', 'MultiEdit', 'Glob', 'Grep', 'TodoWrite']
 const DENIED_TOOLS = [
   'Bash(rm -rf:*)', 'Bash(rm -r:*)', 'Bash(rmdir:*)', 'Bash(del:*)', 'Bash(rd:*)', 'Bash(format:*)', 'Bash(git push:*)',
   'PowerShell(Remove-Item:*)', 'PowerShell(rm:*)', 'PowerShell(del:*)', 'PowerShell(Format-Volume:*)'
@@ -52,7 +60,7 @@ function saveMessage(projectId: string, role: ChatMessage['role'], content: stri
 }
 
 export function isRunning(projectId: string): boolean {
-  return running.has(projectId)
+  return running.has(projectId) || starting.has(projectId)
 }
 
 export function cancelChat(projectId: string): void {
@@ -86,7 +94,8 @@ function applyActions(projectId: string, text: string): string[] {
       if (!m) continue
       const v = listVersions(projectId).find((x) => x.number === Number(m[1]))
       if (v) {
-        restoreVersion(projectId, v.id)
+        if (getProject(projectId)?.kind === 'image') restoreImageVersion(projectId, v.id)
+        else restoreVersion(projectId, v.id)
         done.push(`Versão ${v.label} restaurada`)
       } else {
         done.push(`V${m[1]} não existe`)
@@ -97,8 +106,18 @@ function applyActions(projectId: string, text: string): string[] {
 }
 
 export async function sendChat(projectId: string, text: string, emit: Emit): Promise<void> {
-  if (running.has(projectId)) throw new Error('O Claude ainda está trabalhando neste projeto.')
+  if (isRunning(projectId)) throw new Error('O Claude ainda está trabalhando neste projeto.')
+  starting.add(projectId)
+  try {
+    await startChat(projectId, text, emit)
+  } finally {
+    starting.delete(projectId)
+  }
+}
+
+async function startChat(projectId: string, text: string, emit: Emit): Promise<void> {
   const project = requireProject(projectId)
+  const isImage = project.kind === 'image'
   const bin = await claudePath()
   if (!bin) throw new Error('Claude Code não encontrado. Veja Configurações › Claude.')
 
@@ -108,13 +127,17 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
   run('INSERT OR REPLACE INTO runs(project_id, started_at, request) VALUES(?, ?, ?)', projectId, startedAt, text)
   emit({ type: 'status', projectId, text: 'Claude está analisando o projeto...' })
 
-  // Passo 4 do CLAUDE.md feito pelo estúdio: edit/ = cópia corrigida do Modelo edicao.
-  const prepared = await prepareEditFolder(project).catch(() => ({ created: false, patches: [] as string[] }))
-  if (prepared.created) emit({ type: 'activity', projectId, messageId: 'prep', text: 'Preparou edit/ a partir do Modelo edicao' })
+  if (!isImage) {
+    // Passo 4 do CLAUDE.md feito pelo estúdio: edit/ = cópia corrigida do Modelo edicao.
+    const prepared = await prepareEditFolder(project).catch(() => ({ created: false, patches: [] as string[] }))
+    if (prepared.created) emit({ type: 'activity', projectId, messageId: 'prep', text: 'Preparou edit/ a partir do Modelo edicao' })
+  }
 
   const ctxFile = projectPath(project, 'temp', 'claude-context.md')
   ensureDir(dirname(ctxFile))
-  writeFileSync(ctxFile, await buildContext(project), 'utf8')
+  writeFileSync(ctxFile, isImage ? await buildImageContext(project) : await buildContext(project), 'utf8')
+  // Estado do design antes do turno: no fim, só o que o Claude mudou vira versão.
+  const designBefore = isImage ? captureDesignState(projectId) : null
 
   const s = getSettings()
   let sessionId = project.claudeSessionId
@@ -123,15 +146,24 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
     sessionId = uid()
     setClaudeSession(projectId, sessionId)
   }
+  // Ferramentas estruturadas do editor (servidor MCP local), só no Video Studio, com token deste turno.
+  const agent = isImage ? null : await openAgentSession(projectId)
+  let mcpArgs: string[] = []
+  if (agent) {
+    const cfg = projectPath(project, 'temp', 'pqstudio-mcp.json')
+    writeFileSync(cfg, JSON.stringify({ mcpServers: { pqstudio: { type: 'stdio', command: process.execPath, args: [mcpServerPath()], env: { ELECTRON_RUN_AS_NODE: '1', PQ_BRIDGE_URL: agent.url, PQ_BRIDGE_TOKEN: agent.token } } } }), 'utf8')
+    mcpArgs = ['--mcp-config', cfg]
+  }
   const args = [
     '-p', '--output-format', 'stream-json', '--verbose', '--include-partial-messages',
+    ...mcpArgs,
     '--append-system-prompt-file', ctxFile,
     // Sem isso o CLI congela o prompt do 1º turno e o Claude não veria mídias/versões novas ao retomar.
     '--system-prompt-snapshot', 'off',
-    '--add-dir', s.aqcRoot,
+    '--add-dir', isImage ? s.assetsRoot : s.aqcRoot,
     '--permission-mode', 'acceptEdits',
-    '--allowedTools', ...ALLOWED_TOOLS,
-    '--disallowedTools', ...DENIED_TOOLS,
+    '--allowedTools', ...(isImage ? IMAGE_TOOLS : [...ALLOWED_TOOLS, 'mcp__pqstudio']),
+    '--disallowedTools', ...DENIED_TOOLS, ...(isImage ? ['Bash', 'PowerShell', 'WebFetch', 'WebSearch'] : []),
     ...(resuming ? ['--resume', sessionId] : ['--session-id', sessionId]),
     ...(s.claudeModel ? ['--model', s.claudeModel] : [])
   ]
@@ -143,6 +175,7 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
   const child = spawn(bin, args, { cwd: project.path, env, windowsHide: true, shell: false, detached: ownGroup })
   const state: Running = { child, cancelled: false }
   running.set(projectId, state)
+  if (isImage) lockDesign(projectId, true)
 
   const messageId = uid()
   let live = ''
@@ -186,8 +219,10 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
             finalText += (finalText ? '\n\n' : '') + block.text
           } else if (block.type === 'tool_use') {
             const d = describeTool(block.name, block.input ?? {})
-            activity.push(d.activity)
-            emit({ type: 'activity', projectId, messageId, text: d.activity })
+            if (d.activity) {
+              activity.push(d.activity)
+              emit({ type: 'activity', projectId, messageId, text: d.activity })
+            }
             emit({ type: 'status', projectId, text: d.status })
           }
         }
@@ -223,13 +258,15 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
   child.stdin.end(text, 'utf8')
 
   child.on('close', async (code) => {
-    running.delete(projectId)
-    run('DELETE FROM runs WHERE project_id = ?', projectId)
+    agent?.close()
     pushText(true)
     const content = (finalText || live || resultText).trim()
 
     // Sessão salva que o CLI não conhece mais (ex.: histórico apagado): recomeça uma nova.
     if (resuming && code !== 0 && /No conversation found|session.*not found/i.test(stderr + resultText)) {
+      running.delete(projectId)
+      run('DELETE FROM runs WHERE project_id = ?', projectId)
+      if (isImage) lockDesign(projectId, false)
       setClaudeSession(projectId, null)
       run("DELETE FROM messages WHERE id = (SELECT id FROM messages WHERE project_id = ? AND role = 'user' ORDER BY created_at DESC LIMIT 1)", projectId)
       sendChat(projectId, text, emit).catch((err) => emit({ type: 'error', projectId, error: String(err.message ?? err) }))
@@ -237,13 +274,27 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
     }
 
     let versions: Version[] = []
+    let designChanged = false
     try {
       emit({ type: 'status', projectId, text: 'Finalizando...' })
-      versions = await snapshotOutputs(projectId, startedAt, text, content.slice(0, 2000))
+      if (isImage && designBefore) {
+        const snap = snapshotDesign(projectId, designBefore, text, content.slice(0, 2000))
+        versions = snap.versions
+        designChanged = snap.designChanged
+        activity.push(...snap.notes)
+      } else {
+        versions = await snapshotOutputs(projectId, startedAt, text, content.slice(0, 2000))
+      }
     } catch (err) {
       activity.push(`Falha ao registrar versão: ${(err as Error).message}`)
+    } finally {
+      // Só libera o projeto depois de a versão estar registrada.
+      if (isImage) lockDesign(projectId, false)
+      running.delete(projectId)
+      run('DELETE FROM runs WHERE project_id = ?', projectId)
     }
     const actions = applyActions(projectId, content)
+    if (isImage && actions.some((a) => a.endsWith('restaurada'))) designChanged = true
     activity.push(...actions)
     if (versions.length) activity.push(`Nova versão: ${versions.map((v) => v.label).join(', ')}`)
 
@@ -253,11 +304,13 @@ export async function sendChat(projectId: string, text: string, emit: Emit): Pro
     else if (isError && !content) body = 'O Claude retornou um erro sem mensagem.'
     const message = saveMessage(projectId, 'assistant', body || '(sem resposta)', activity)
     touchProject(projectId)
-    emit({ type: 'done', projectId, message, versions, costUsd })
+    emit({ type: 'done', projectId, message, versions, costUsd, designChanged })
   })
 
   child.on('error', (err) => {
+    agent?.close()
     running.delete(projectId)
+    if (isImage) lockDesign(projectId, false)
     run('DELETE FROM runs WHERE project_id = ?', projectId)
     emit({ type: 'error', projectId, error: `Falha ao iniciar o Claude: ${err.message}` })
   })

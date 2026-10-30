@@ -17,7 +17,9 @@ const CATS: { id: AssetCategory; label: string }[] = [
 const ICON: Record<AssetCategory, typeof Film> = { logos: ImageIcon, musicas: FileAudio, fontes: Type, overlays: ImageIcon, intros: Film, finais: Film }
 
 export function AssetsPanel() {
-  const { projectId, refreshMedia, toast } = useStore()
+  const { refreshMedia, toast } = useStore()
+  // "Usar no projeto" só vale para projetos de vídeo (no Image Studio as imagens entram pela barra da arte).
+  const projectId = useStore((s) => (s.projects.find((p) => p.id === s.projectId)?.kind === 'video' && s.view === 'project' ? s.projectId : null))
   const [cat, setCat] = useState<AssetCategory>('logos')
   const [items, setItems] = useState<AssetItem[]>([])
 

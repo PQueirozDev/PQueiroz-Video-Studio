@@ -77,6 +77,7 @@ export async function importMedia(projectId: string, paths: string[]): Promise<I
     }
   }
   if (result.imported.length) {
+    run('DELETE FROM timeline_history WHERE project_id = ?', projectId)
     if (project.status === 'novo') updateProject(projectId, { status: 'editando' })
     else touchProject(projectId)
   }
@@ -94,6 +95,7 @@ export async function removeMedia(projectId: string, id: string): Promise<void> 
   const row = one<MediaRow>('SELECT * FROM media WHERE id = ? AND project_id = ?', id, projectId)
   if (!row) return
   run('DELETE FROM media WHERE id = ?', id)
+  run('DELETE FROM timeline_history WHERE project_id = ?', projectId)
   if (row.thumbnail && isInside(project.path, row.thumbnail)) await unlink(row.thumbnail).catch(() => {})
   touchProject(projectId)
 }

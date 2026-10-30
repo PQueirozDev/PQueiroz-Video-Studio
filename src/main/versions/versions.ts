@@ -11,11 +11,13 @@ import { now, uid } from '../util'
 // "Original" é sempre o material importado em input/, que nunca é alterado.
 
 interface VersionRow {
+  favorite: number
   id: string; project_id: string; number: number; label: string; path: string; source_path: string | null
   request: string; changes: string; parent_id: string | null; duration: number | null; thumbnail: string | null; created_at: number
 }
 
 const toVersion = (r: VersionRow): Version => ({
+  favorite: Boolean(r.favorite),
   id: r.id, projectId: r.project_id, number: r.number, label: r.label, path: r.path, sourcePath: r.source_path,
   request: r.request, changes: r.changes, parentId: r.parent_id, duration: r.duration,
   thumbnail: r.thumbnail && existsSync(r.thumbnail) ? r.thumbnail : null, createdAt: r.created_at
@@ -25,7 +27,7 @@ export function listVersions(projectId: string): Version[] {
   return all<VersionRow>('SELECT * FROM versions WHERE project_id = ? ORDER BY number', projectId).map(toVersion)
 }
 
-function nextNumber(projectId: string): number {
+export function nextNumber(projectId: string): number {
   return (one<{ n: number | null }>('SELECT MAX(number) AS n FROM versions WHERE project_id = ?', projectId)?.n ?? 0) + 1
 }
 
@@ -95,4 +97,9 @@ export async function duplicateVersion(projectId: string, versionId: string): Pr
 export function getVersion(versionId: string): Version | null {
   const r = one<VersionRow>('SELECT * FROM versions WHERE id = ?', versionId)
   return r ? toVersion(r) : null
+}
+
+export function favoriteVersion(projectId: string, id: string, favorite: boolean): void {
+  if (!listVersions(projectId).some((v) => v.id === id)) throw new Error('Versão não encontrada')
+  run('UPDATE versions SET favorite = ? WHERE id = ? AND project_id = ?', favorite ? 1 : 0, id, projectId)
 }

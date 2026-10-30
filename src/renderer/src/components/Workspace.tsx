@@ -7,6 +7,8 @@ import { ProjectsSidebar } from './ProjectsSidebar'
 import { Player } from './Player'
 import { ChatPanel } from './ChatPanel'
 import { BottomPanel } from './BottomPanel'
+import { CompositionPreview } from '@/editor/CompositionPreview'
+import { useEditor } from '@/editor/editorStore'
 
 const storage = {
   getItem: (k: string) => {
@@ -27,6 +29,7 @@ const storage = {
 
 export function Workspace() {
   const importPaths = useStore((s) => s.importPaths)
+  const timelinePreview = useEditor((s) => s.previewActive && s.doc !== null)
   const [dragging, setDragging] = useState(false)
   const [overAssets, setOverAssets] = useState(false)
   const depth = useRef(0)
@@ -84,7 +87,7 @@ export function Workspace() {
             </Panel>
             <Separator className="w-px" />
             <Panel id="preview" minSize="30%" defaultSize="56%">
-              <Player />
+              {timelinePreview ? <CompositionPreview /> : <Player />}
             </Panel>
             <Separator className="w-px" />
             <Panel id="chat" defaultSize="28%" minSize="280px" maxSize="50%">

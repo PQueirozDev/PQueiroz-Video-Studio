@@ -67,10 +67,10 @@ export interface FfmpegRun {
  * Executa o ffmpeg com `-progress pipe:1` e reporta o progresso real (0–1)
  * a partir de `out_time_us` sobre a duração conhecida.
  */
-export async function runFfmpeg(args: string[], duration: number | null, onProgress: (p: number) => void): Promise<FfmpegRun> {
+export async function runFfmpeg(args: string[], duration: number | null, onProgress: (p: number) => void, cwd?: string): Promise<FfmpegRun> {
   const bin = await ffmpegPath()
   if (!bin) throw new Error('FFmpeg não encontrado')
-  const child = spawn(bin, ['-hide_banner', '-nostats', '-progress', 'pipe:1', ...args], { windowsHide: true, detached: ownGroup })
+  const child = spawn(bin, ['-hide_banner', '-nostats', '-progress', 'pipe:1', ...args], { windowsHide: true, detached: ownGroup, cwd })
   let stderr = ''
   let buf = ''
   child.stdout.on('data', (d: Buffer) => {

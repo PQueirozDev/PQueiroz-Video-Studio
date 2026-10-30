@@ -44,7 +44,34 @@ export function describeTool(name: string, input: Record<string, unknown>): Tool
       return { status: 'Procurando arquivos...', activity: `Buscou ${short(String(input.pattern ?? ''), 50)}` }
     case 'TodoWrite':
       return { status: 'Planejando a edição...', activity: 'Atualizou o plano' }
-    default:
+    case 'ToolSearch':
+      return { status: 'Preparando as ferramentas...', activity: '' }
+    default: {
+      const studio = STUDIO_TOOLS[name.replace(/^mcp__pqstudio__/, '')]
+      if (name.startsWith('mcp__pqstudio__') && studio) {
+        const n = Array.isArray(input.commands) ? input.commands.length : 0
+        return { status: studio[0], activity: name.endsWith('editar_timeline') && n ? `${studio[1]} (${n} ${n === 1 ? 'mudança' : 'mudanças'})` : studio[1] }
+      }
       return { status: `Usando ${name}...`, activity: name }
+    }
   }
+}
+
+/** Ferramentas do editor (servidor MCP do estúdio): [status enquanto roda, linha de atividade]. */
+const STUDIO_TOOLS: Record<string, [string, string]> = {
+  estado_projeto: ['Olhando a timeline...', 'Leu a timeline'],
+  catalogo: ['Vendo efeitos e assets disponíveis...', 'Consultou o catálogo'],
+  editar_timeline: ['Editando a timeline...', 'Editou a timeline'],
+  desfazer: ['Desfazendo...', 'Desfez a última edição'],
+  analisar_midia: ['Analisando a mídia...', 'Analisou a mídia'],
+  melhores_momentos: ['Procurando os melhores momentos...', 'Encontrou os melhores momentos'],
+  auto_studio: ['Montando a edição automática...', 'Montou a edição (Auto Studio)'],
+  usar_asset: ['Aplicando asset do Asset Hub...', 'Usou um asset do Asset Hub'],
+  transcrever: ['Transcrevendo a fala...', 'Transcreveu a fala'],
+  legendas_na_timeline: ['Colocando legendas...', 'Pôs as legendas na timeline'],
+  gerar_versao: ['Renderizando a versão...', 'Gerou uma nova versão'],
+  estilos: ['Vendo os estilos salvos...', 'Consultou os estilos'],
+  verificar_qualidade: ['Verificando a qualidade...', 'Fez o Quality Check'],
+  aprender_estilo: ['Aprendendo o estilo da edição...', 'Salvou o estilo da edição'],
+  aplicar_estilo: ['Aplicando o estilo...', 'Aplicou um estilo salvo']
 }

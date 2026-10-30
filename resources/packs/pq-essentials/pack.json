@@ -1,0 +1,2605 @@
+{
+ "format": 1,
+ "id": "pq-essentials",
+ "name": "Essenciais PQueiroz",
+ "version": "1.0.0",
+ "author": "PQueiroz Studio",
+ "license": "Fontes: SIL Open Font License 1.1 (licenças em fonts/licencas). SFX, overlays, LUTs, títulos e presets: obra original dos packs HL/VEP e do app, livres para uso no PQueiroz Studio.",
+ "description": "15 fontes do Google Fonts, efeitos sonoros, overlays de luz/filme, LUTs, 20 títulos e presets de movimento e cor.",
+ "items": [
+  {
+   "type": "font",
+   "id": "anton",
+   "name": "Anton",
+   "file": "fonts/Anton-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "archivo-black",
+   "name": "Archivo Black",
+   "file": "fonts/ArchivoBlack-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "bangers",
+   "name": "Bangers",
+   "file": "fonts/Bangers-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "bebas-neue",
+   "name": "Bebas Neue",
+   "file": "fonts/BebasNeue-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "black-ops-one",
+   "name": "Black Ops One",
+   "file": "fonts/BlackOpsOne-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "bungee",
+   "name": "Bungee",
+   "file": "fonts/Bungee-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "kanit-bold",
+   "name": "Kanit Bold",
+   "file": "fonts/Kanit-Bold.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "lobster",
+   "name": "Lobster",
+   "file": "fonts/Lobster-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "monoton",
+   "name": "Monoton",
+   "file": "fonts/Monoton-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "pacifico",
+   "name": "Pacifico",
+   "file": "fonts/Pacifico-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "poppins-bold",
+   "name": "Poppins Bold",
+   "file": "fonts/Poppins-Bold.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "poppins-regular",
+   "name": "Poppins",
+   "file": "fonts/Poppins-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "press-start-2p",
+   "name": "Press Start 2P",
+   "file": "fonts/PressStart2P-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "righteous",
+   "name": "Righteous",
+   "file": "fonts/Righteous-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "russo-one",
+   "name": "Russo One",
+   "file": "fonts/RussoOne-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "font",
+   "id": "staatliches",
+   "name": "Staatliches",
+   "file": "fonts/Staatliches-Regular.ttf",
+   "tags": [
+    "google-fonts",
+    "ofl"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "flash-pop",
+   "name": "Flash pop",
+   "file": "sfx/flash-pop.wav",
+   "tags": [
+    "flash",
+    "pop"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "glitch-burst",
+   "name": "Glitch burst",
+   "file": "sfx/glitch-burst.wav",
+   "tags": [
+    "glitch"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "glitch-stutter",
+   "name": "Glitch stutter",
+   "file": "sfx/glitch-stutter.wav",
+   "tags": [
+    "glitch"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "headshot-ding",
+   "name": "Headshot ding",
+   "file": "sfx/headshot-ding.wav",
+   "tags": [
+    "valorant",
+    "kill",
+    "ding"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "impact-boom",
+   "name": "Impacto boom",
+   "file": "sfx/impact-boom.wav",
+   "tags": [
+    "impacto"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "impact-punch",
+   "name": "Impacto curto",
+   "file": "sfx/impact-punch.wav",
+   "tags": [
+    "impacto"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "reverse-swell",
+   "name": "Reverse swell",
+   "file": "sfx/reverse-swell.wav",
+   "tags": [
+    "transicao",
+    "riser"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "riser-2s",
+   "name": "Riser 2 s",
+   "file": "sfx/riser-2s.wav",
+   "tags": [
+    "riser",
+    "tensao"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "sub-drop",
+   "name": "Sub drop",
+   "file": "sfx/sub-drop.wav",
+   "tags": [
+    "grave",
+    "drop"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "swoosh",
+   "name": "Swoosh",
+   "file": "sfx/swoosh.wav",
+   "tags": [
+    "transicao",
+    "whoosh"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "whoosh",
+   "name": "Whoosh",
+   "file": "sfx/whoosh.wav",
+   "tags": [
+    "transicao",
+    "whoosh"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "whoosh-fast",
+   "name": "Whoosh rápido",
+   "file": "sfx/whoosh-fast.wav",
+   "tags": [
+    "transicao",
+    "whoosh"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "click",
+   "name": "Clique",
+   "file": "sfx/click.wav",
+   "tags": [
+    "ui",
+    "clique"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "pop",
+   "name": "Pop",
+   "file": "sfx/pop.wav",
+   "tags": [
+    "ui",
+    "pop"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "typewriter",
+   "name": "Máquina de escrever",
+   "file": "sfx/typewriter.wav",
+   "tags": [
+    "texto",
+    "digitar"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "notify-ding",
+   "name": "Notificação",
+   "file": "sfx/notify-ding.wav",
+   "tags": [
+    "ui",
+    "ding"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "bass-hit",
+   "name": "Grave de impacto",
+   "file": "sfx/bass-hit.wav",
+   "tags": [
+    "impacto",
+    "grave"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "tape-stop",
+   "name": "Tape stop",
+   "file": "sfx/tape-stop.wav",
+   "tags": [
+    "transicao",
+    "parada"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "rise-short",
+   "name": "Subida curta",
+   "file": "sfx/rise-short.wav",
+   "tags": [
+    "riser",
+    "transicao"
+   ]
+  },
+  {
+   "type": "sfx",
+   "id": "camera-shutter",
+   "name": "Obturador",
+   "file": "sfx/camera-shutter.wav",
+   "tags": [
+    "foto",
+    "clique"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "flash-radial",
+   "name": "Flash radial",
+   "file": "overlays/flash-radial.mp4",
+   "blend": "screen",
+   "tags": [
+    "flash"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "flash-white",
+   "name": "Flash branco",
+   "file": "overlays/flash-white.mp4",
+   "blend": "screen",
+   "tags": [
+    "flash"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "glitch-blocks",
+   "name": "Blocos de glitch",
+   "file": "overlays/glitch-blocks.mp4",
+   "blend": "screen",
+   "tags": [
+    "glitch"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "light-leak-warm",
+   "name": "Light leak quente",
+   "file": "overlays/light-leak-warm.mp4",
+   "blend": "screen",
+   "tags": [
+    "luz",
+    "cinema"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "light-sweep",
+   "name": "Varredura de luz",
+   "file": "overlays/light-sweep.mp4",
+   "blend": "screen",
+   "tags": [
+    "luz"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "light-leak-cool",
+   "name": "Light leak frio",
+   "file": "overlays/light-leak-cool.mp4",
+   "blend": "screen",
+   "tags": [
+    "luz",
+    "cinema"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "film-burn",
+   "name": "Queima de filme",
+   "file": "overlays/film-burn.mp4",
+   "blend": "screen",
+   "tags": [
+    "filme",
+    "transicao"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "film-grain",
+   "name": "Granulação de filme",
+   "file": "overlays/film-grain.mp4",
+   "blend": "screen",
+   "tags": [
+    "filme",
+    "textura"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "dust",
+   "name": "Poeira",
+   "file": "overlays/dust.mp4",
+   "blend": "screen",
+   "tags": [
+    "filme",
+    "textura"
+   ]
+  },
+  {
+   "type": "overlay",
+   "id": "vhs-lines",
+   "name": "Linhas de VHS",
+   "file": "overlays/vhs-lines.mp4",
+   "blend": "screen",
+   "tags": [
+    "vhs",
+    "retro"
+   ]
+  },
+  {
+   "type": "lut",
+   "id": "vep-bw-contrast",
+   "name": "VEP BW Contrast",
+   "file": "luts/vep-bw-contrast.cube",
+   "tags": [
+    "cor"
+   ]
+  },
+  {
+   "type": "lut",
+   "id": "vep-cold-blue",
+   "name": "VEP Cold Blue",
+   "file": "luts/vep-cold-blue.cube",
+   "tags": [
+    "cor"
+   ]
+  },
+  {
+   "type": "lut",
+   "id": "vep-faded-film",
+   "name": "VEP Faded Film",
+   "file": "luts/vep-faded-film.cube",
+   "tags": [
+    "cor"
+   ]
+  },
+  {
+   "type": "lut",
+   "id": "vep-night-neon",
+   "name": "VEP Night Neon",
+   "file": "luts/vep-night-neon.cube",
+   "tags": [
+    "cor"
+   ]
+  },
+  {
+   "type": "lut",
+   "id": "vep-punch-contrast",
+   "name": "VEP Punch Contrast",
+   "file": "luts/vep-punch-contrast.cube",
+   "tags": [
+    "cor"
+   ]
+  },
+  {
+   "type": "lut",
+   "id": "vep-teal-orange",
+   "name": "VEP Teal Orange",
+   "file": "luts/vep-teal-orange.cube",
+   "tags": [
+    "cor"
+   ]
+  },
+  {
+   "type": "lut",
+   "id": "vep-vibrant-pop",
+   "name": "VEP Vibrant Pop",
+   "file": "luts/vep-vibrant-pop.cube",
+   "tags": [
+    "cor"
+   ]
+  },
+  {
+   "type": "lut",
+   "id": "vep-warm-cinematic",
+   "name": "VEP Warm Cinematic",
+   "file": "luts/vep-warm-cinematic.cube",
+   "tags": [
+    "cor"
+   ]
+  },
+  {
+   "type": "title",
+   "id": "impacto",
+   "name": "Impacto central",
+   "tags": [
+    "gaming"
+   ],
+   "title": {
+    "style": {
+     "text": "IMPACTO",
+     "font": "anton",
+     "size": 0.17,
+     "outline": 0.07,
+     "outlineColor": "#000000",
+     "shadow": 0.05
+    },
+    "duration": 2,
+    "fadeIn": 0,
+    "fadeOut": 0.25,
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.35,
+       "ease": "out"
+      },
+      {
+       "t": 0.22,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "headshot",
+   "name": "Headshot",
+   "tags": [
+    "gaming",
+    "valorant"
+   ],
+   "title": {
+    "style": {
+     "text": "HEADSHOT",
+     "font": "black-ops-one",
+     "size": 0.13,
+     "color": "#ff2d55",
+     "outline": 0.07,
+     "outlineColor": "#000000",
+     "uppercase": true
+    },
+    "duration": 1.8,
+    "fadeIn": 0,
+    "fadeOut": 0.3,
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.4,
+       "ease": "out"
+      },
+      {
+       "t": 0.15,
+       "v": 1.05,
+       "ease": "out"
+      },
+      {
+       "t": 0.4,
+       "v": 1,
+       "ease": "out"
+      }
+     ],
+     "x": [
+      {
+       "t": 0,
+       "v": 0.015,
+       "ease": "linear"
+      },
+      {
+       "t": 0.05,
+       "v": -0.015,
+       "ease": "linear"
+      },
+      {
+       "t": 0.1,
+       "v": 0.01,
+       "ease": "linear"
+      },
+      {
+       "t": 0.15,
+       "v": -0.006,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "clutch",
+   "name": "Clutch",
+   "tags": [
+    "gaming"
+   ],
+   "title": {
+    "style": {
+     "text": "CLUTCH!",
+     "font": "bangers",
+     "size": 0.18,
+     "color": "#ffd60a",
+     "outline": 0.07,
+     "outlineColor": "#000000"
+    },
+    "duration": 2,
+    "fadeIn": 0,
+    "fadeOut": 0.3,
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.35,
+       "ease": "out"
+      },
+      {
+       "t": 0.22,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "ace",
+   "name": "Ace",
+   "tags": [
+    "gaming",
+    "valorant"
+   ],
+   "title": {
+    "style": {
+     "text": "ACE",
+     "font": "russo-one",
+     "size": 0.22,
+     "color": "#00e5ff",
+     "outline": 0.07,
+     "outlineColor": "#001a33"
+    },
+    "duration": 2.2,
+    "fadeIn": 0,
+    "fadeOut": 0.3,
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.6,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.6,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "legenda-tiktok",
+   "name": "Legenda TikTok",
+   "tags": [
+    "legenda",
+    "shorts"
+   ],
+   "title": {
+    "style": {
+     "text": "legenda grande e legível",
+     "font": "poppins-bold",
+     "size": 0.065,
+     "y": 0.72,
+     "outline": 0.12,
+     "shadow": 0,
+     "uppercase": true
+    },
+    "duration": 2.5,
+    "fadeIn": 0.08,
+    "fadeOut": 0.08
+   }
+  },
+  {
+   "type": "title",
+   "id": "legenda-caixa",
+   "name": "Legenda com caixa",
+   "tags": [
+    "legenda"
+   ],
+   "title": {
+    "style": {
+     "text": "Legenda com fundo",
+     "font": "poppins-bold",
+     "size": 0.055,
+     "y": 0.84,
+     "box": 0.75,
+     "shadow": 0
+    },
+    "duration": 2.5,
+    "fadeIn": 0.15,
+    "fadeOut": 0.15,
+    "keyframes": {
+     "y": [
+      {
+       "t": 0,
+       "v": 0.08,
+       "ease": "out"
+      },
+      {
+       "t": 0.35,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "lower-third",
+   "name": "Lower third simples",
+   "tags": [
+    "apresentacao"
+   ],
+   "title": {
+    "style": {
+     "text": "Seu nome\nfunção ou @perfil",
+     "font": "poppins-bold",
+     "size": 0.05,
+     "x": 0.06,
+     "y": 0.84,
+     "align": "left",
+     "box": 0.85,
+     "boxColor": "#111111",
+     "shadow": 0
+    },
+    "duration": 4,
+    "fadeIn": 0.15,
+    "fadeOut": 0.3,
+    "keyframes": {
+     "x": [
+      {
+       "t": 0,
+       "v": -0.45,
+       "ease": "out"
+      },
+      {
+       "t": 0.4,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "lower-third-destaque",
+   "name": "Lower third destaque",
+   "tags": [
+    "apresentacao"
+   ],
+   "title": {
+    "style": {
+     "text": "NOME EM DESTAQUE",
+     "font": "bebas-neue",
+     "size": 0.075,
+     "x": 0.06,
+     "y": 0.82,
+     "align": "left",
+     "box": 0.92,
+     "boxColor": "#7c3aed",
+     "shadow": 0
+    },
+    "duration": 4,
+    "fadeIn": 0.15,
+    "fadeOut": 0.3,
+    "keyframes": {
+     "x": [
+      {
+       "t": 0,
+       "v": -0.45,
+       "ease": "out"
+      },
+      {
+       "t": 0.4,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "cinema",
+   "name": "Título de cinema",
+   "tags": [
+    "cinema"
+   ],
+   "title": {
+    "style": {
+     "text": "O COMEÇO",
+     "font": "bebas-neue",
+     "size": 0.12,
+     "color": "#f2f2f2",
+     "shadow": 0.02
+    },
+    "duration": 4,
+    "fadeIn": 0.8,
+    "fadeOut": 0.8,
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 4,
+       "v": 1.08,
+       "ease": "linear"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "capitulo",
+   "name": "Capítulo",
+   "tags": [
+    "cinema"
+   ],
+   "title": {
+    "style": {
+     "text": "CAPÍTULO 1",
+     "font": "archivo-black",
+     "size": 0.045,
+     "x": 0.06,
+     "y": 0.1,
+     "align": "left",
+     "shadow": 0.03
+    },
+    "duration": 3,
+    "fadeIn": 0.3,
+    "fadeOut": 0.4,
+    "keyframes": {
+     "x": [
+      {
+       "t": 0,
+       "v": 0.45,
+       "ease": "out"
+      },
+      {
+       "t": 0.4,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "neon",
+   "name": "Neon",
+   "tags": [
+    "retro"
+   ],
+   "title": {
+    "style": {
+     "text": "NEON",
+     "font": "monoton",
+     "size": 0.16,
+     "color": "#ff4fd8",
+     "shadow": 0
+    },
+    "duration": 3,
+    "fadeIn": 0.4,
+    "fadeOut": 0.4
+   }
+  },
+  {
+   "type": "title",
+   "id": "arcade",
+   "name": "Arcade retrô",
+   "tags": [
+    "gaming",
+    "retro"
+   ],
+   "title": {
+    "style": {
+     "text": "LEVEL UP",
+     "font": "press-start-2p",
+     "size": 0.06,
+     "color": "#39ff14",
+     "outline": 0.07,
+     "outlineColor": "#002200"
+    },
+    "duration": 2.2,
+    "fadeIn": 0,
+    "fadeOut": 0.2,
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.35,
+       "ease": "out"
+      },
+      {
+       "t": 0.22,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "cartoon",
+   "name": "Cartoon pop",
+   "tags": [
+    "divertido"
+   ],
+   "title": {
+    "style": {
+     "text": "BOOM!",
+     "font": "bangers",
+     "size": 0.2,
+     "color": "#ffffff",
+     "outline": 0.14,
+     "outlineColor": "#000000"
+    },
+    "duration": 1.8,
+    "fadeIn": 0,
+    "fadeOut": 0.2,
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.3,
+       "ease": "out"
+      },
+      {
+       "t": 0.2,
+       "v": 1,
+       "ease": "out"
+      }
+     ],
+     "rotation": [
+      {
+       "t": 0,
+       "v": -8,
+       "ease": "out"
+      },
+      {
+       "t": 0.12,
+       "v": 5,
+       "ease": "out"
+      },
+      {
+       "t": 0.24,
+       "v": -2,
+       "ease": "out"
+      },
+      {
+       "t": 0.34,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "assinatura",
+   "name": "Assinatura",
+   "tags": [
+    "marca"
+   ],
+   "title": {
+    "style": {
+     "text": "PQueiroz",
+     "font": "pacifico",
+     "size": 0.07,
+     "x": 0.94,
+     "y": 0.88,
+     "align": "right",
+     "shadow": 0.05
+    },
+    "duration": 4,
+    "fadeIn": 0.5,
+    "fadeOut": 0.5
+   }
+  },
+  {
+   "type": "title",
+   "id": "elegante",
+   "name": "Elegante",
+   "tags": [
+    "cinema"
+   ],
+   "title": {
+    "style": {
+     "text": "Uma história",
+     "font": "lobster",
+     "size": 0.11,
+     "color": "#f5e6c8",
+     "shadow": 0.04
+    },
+    "duration": 3.5,
+    "fadeIn": 0.6,
+    "fadeOut": 0.6
+   }
+  },
+  {
+   "type": "title",
+   "id": "placar",
+   "name": "Placar",
+   "tags": [
+    "gaming"
+   ],
+   "title": {
+    "style": {
+     "text": "13 x 11",
+     "font": "russo-one",
+     "size": 0.07,
+     "y": 0.1,
+     "box": 0.8,
+     "boxColor": "#0b0b10",
+     "shadow": 0
+    },
+    "duration": 3,
+    "fadeIn": 0,
+    "fadeOut": 0.3,
+    "keyframes": {
+     "y": [
+      {
+       "t": 0,
+       "v": -0.25,
+       "ease": "out"
+      },
+      {
+       "t": 0.3,
+       "v": 0.015,
+       "ease": "out"
+      },
+      {
+       "t": 0.42,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "inscreva-se",
+   "name": "Chamada: inscreva-se",
+   "tags": [
+    "youtube",
+    "cta"
+   ],
+   "title": {
+    "style": {
+     "text": "SE INSCREVA",
+     "font": "kanit-bold",
+     "size": 0.07,
+     "y": 0.82,
+     "box": 0.95,
+     "boxColor": "#ff0033",
+     "shadow": 0
+    },
+    "duration": 3,
+    "fadeIn": 0.1,
+    "fadeOut": 0.3,
+    "keyframes": {
+     "y": [
+      {
+       "t": 0,
+       "v": 0.08,
+       "ease": "out"
+      },
+      {
+       "t": 0.35,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "citacao",
+   "name": "Citação",
+   "tags": [
+    "texto"
+   ],
+   "title": {
+    "style": {
+     "text": "\"Uma frase marcante\nem duas linhas\"",
+     "font": "poppins-regular",
+     "size": 0.06,
+     "lineSpacing": 1.35,
+     "shadow": 0.03
+    },
+    "duration": 4,
+    "fadeIn": 0.5,
+    "fadeOut": 0.5
+   }
+  },
+  {
+   "type": "title",
+   "id": "titulo-subtitulo",
+   "name": "Título + subtítulo",
+   "tags": [
+    "texto"
+   ],
+   "title": {
+    "style": {
+     "text": "TÍTULO PRINCIPAL\nsubtítulo aqui",
+     "font": "staatliches",
+     "size": 0.1,
+     "lineSpacing": 1.1,
+     "shadow": 0.04
+    },
+    "duration": 3.5,
+    "fadeIn": 0.3,
+    "fadeOut": 0.4,
+    "keyframes": {
+     "y": [
+      {
+       "t": 0,
+       "v": 0.08,
+       "ease": "out"
+      },
+      {
+       "t": 0.35,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "title",
+   "id": "alerta",
+   "name": "Alerta",
+   "tags": [
+    "aviso"
+   ],
+   "title": {
+    "style": {
+     "text": "ATENÇÃO",
+     "font": "righteous",
+     "size": 0.08,
+     "color": "#111111",
+     "y": 0.15,
+     "box": 0.95,
+     "boxColor": "#ffd60a",
+     "shadow": 0
+    },
+    "duration": 2.5,
+    "fadeIn": 0,
+    "fadeOut": 0.3,
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.35,
+       "ease": "out"
+      },
+      {
+       "t": 0.22,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "shake-impacto",
+   "name": "Shake de impacto",
+   "tags": [
+    "shake",
+    "impacto"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "x": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": 0.0098,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": -0.0044,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": 0.0024,
+       "ease": "linear"
+      },
+      {
+       "t": 0.25,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "y": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": -0.0076,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": 0.0028,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": -0.0015,
+       "ease": "linear"
+      },
+      {
+       "t": 0.25,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "rotation": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": -0.801,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": 0.518,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": -0.189,
+       "ease": "linear"
+      },
+      {
+       "t": 0.25,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.06,
+       "ease": "linear"
+      },
+      {
+       "t": 0.25,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "shake-pesado",
+   "name": "Shake pesado",
+   "tags": [
+    "shake",
+    "impacto"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "x": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": 0.0157,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": -0.0194,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": 0.0142,
+       "ease": "linear"
+      },
+      {
+       "t": 0.267,
+       "v": -0.0125,
+       "ease": "linear"
+      },
+      {
+       "t": 0.333,
+       "v": 0.0091,
+       "ease": "linear"
+      },
+      {
+       "t": 0.4,
+       "v": -0.0045,
+       "ease": "linear"
+      },
+      {
+       "t": 0.467,
+       "v": 0.0014,
+       "ease": "linear"
+      },
+      {
+       "t": 0.5,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "y": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": -0.0171,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": 0.0007,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": -0.007,
+       "ease": "linear"
+      },
+      {
+       "t": 0.267,
+       "v": -0.0051,
+       "ease": "linear"
+      },
+      {
+       "t": 0.333,
+       "v": 0.0003,
+       "ease": "linear"
+      },
+      {
+       "t": 0.4,
+       "v": -0.0019,
+       "ease": "linear"
+      },
+      {
+       "t": 0.467,
+       "v": 0.0014,
+       "ease": "linear"
+      },
+      {
+       "t": 0.5,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "rotation": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": -2.998,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": 1.804,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": -1.631,
+       "ease": "linear"
+      },
+      {
+       "t": 0.267,
+       "v": 0.944,
+       "ease": "linear"
+      },
+      {
+       "t": 0.333,
+       "v": -0.698,
+       "ease": "linear"
+      },
+      {
+       "t": 0.4,
+       "v": 0.537,
+       "ease": "linear"
+      },
+      {
+       "t": 0.467,
+       "v": -0.146,
+       "ease": "linear"
+      },
+      {
+       "t": 0.5,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.12,
+       "ease": "linear"
+      },
+      {
+       "t": 0.5,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "recoil",
+   "name": "Coice (recoil)",
+   "tags": [
+    "shake",
+    "arma"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.04,
+       "ease": "linear"
+      },
+      {
+       "t": 0.3,
+       "v": 1,
+       "ease": "out"
+      }
+     ],
+     "y": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.03333333333333333,
+       "v": 0.02,
+       "ease": "linear"
+      },
+      {
+       "t": 0.3,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "rotation": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.03333333333333333,
+       "v": -1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.3,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "camera-na-mao",
+   "name": "Câmera na mão",
+   "tags": [
+    "camera",
+    "suave"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "start",
+    "keyframes": {
+     "x": [
+      {
+       "t": 0,
+       "v": 0.0008,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.25,
+       "v": 0.0014,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.5,
+       "v": -0.0018,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.75,
+       "v": -0.0002,
+       "ease": "inOut"
+      },
+      {
+       "t": 1,
+       "v": 0.002,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.25,
+       "v": 0,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.5,
+       "v": -0.004,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.75,
+       "v": -0.0036,
+       "ease": "inOut"
+      },
+      {
+       "t": 2,
+       "v": -0.0019,
+       "ease": "inOut"
+      }
+     ],
+     "y": [
+      {
+       "t": 0,
+       "v": -0.0004,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.25,
+       "v": -0.0026,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.5,
+       "v": 0.001,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.75,
+       "v": -0.002,
+       "ease": "inOut"
+      },
+      {
+       "t": 1,
+       "v": -0.0015,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.25,
+       "v": 0.0015,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.5,
+       "v": -0.0002,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.75,
+       "v": 0.0007,
+       "ease": "inOut"
+      },
+      {
+       "t": 2,
+       "v": -0.0035,
+       "ease": "inOut"
+      }
+     ],
+     "rotation": [
+      {
+       "t": 0,
+       "v": 0.282,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.25,
+       "v": 0.021,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.5,
+       "v": 0.292,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.75,
+       "v": 0.306,
+       "ease": "inOut"
+      },
+      {
+       "t": 1,
+       "v": -0.242,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.25,
+       "v": 0.088,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.5,
+       "v": 0.27,
+       "ease": "inOut"
+      },
+      {
+       "t": 1.75,
+       "v": -0.375,
+       "ease": "inOut"
+      },
+      {
+       "t": 2,
+       "v": -0.251,
+       "ease": "inOut"
+      }
+     ],
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.03,
+       "ease": "hold"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "zoom-in-suave",
+   "name": "Zoom in suave",
+   "tags": [
+    "zoom"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "inOut"
+      },
+      {
+       "t": 1,
+       "v": 1.15,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "zoom-out-suave",
+   "name": "Zoom out suave",
+   "tags": [
+    "zoom"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1.15,
+       "ease": "inOut"
+      },
+      {
+       "t": 1,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "zoom-punch",
+   "name": "Zoom punch",
+   "tags": [
+    "zoom",
+    "impacto"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.06666666666666667,
+       "v": 1.18,
+       "ease": "out"
+      },
+      {
+       "t": 0.35,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "zoom-punch-hold",
+   "name": "Zoom punch e segura",
+   "tags": [
+    "zoom",
+    "impacto"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.06666666666666667,
+       "v": 1.18,
+       "ease": "out"
+      },
+      {
+       "t": 0.25,
+       "v": 1.12,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "velocity-hit",
+   "name": "Velocity hit",
+   "tags": [
+    "velocity"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.1,
+       "v": 1.08,
+       "ease": "out"
+      },
+      {
+       "t": 0.4,
+       "v": 1,
+       "ease": "out"
+      }
+     ],
+     "blur": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": 10,
+       "ease": "linear"
+      },
+      {
+       "t": 0.267,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "velocity-push",
+   "name": "Velocity push",
+   "tags": [
+    "velocity",
+    "transicao"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "in"
+      },
+      {
+       "t": 0.5,
+       "v": 1.2,
+       "ease": "out"
+      }
+     ],
+     "blur": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.3,
+       "v": 0,
+       "ease": "in"
+      },
+      {
+       "t": 0.5,
+       "v": 6,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "flash-branco",
+   "name": "Flash branco",
+   "tags": [
+    "flash"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "brightness": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 0.6,
+       "ease": "linear"
+      },
+      {
+       "t": 0.167,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "contrast": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 0.8,
+       "ease": "linear"
+      },
+      {
+       "t": 0.167,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "flash-punch",
+   "name": "Flash punch",
+   "tags": [
+    "flash",
+    "impacto"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "brightness": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 0.4,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "contrast": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 1.45,
+       "ease": "linear"
+      },
+      {
+       "t": 0.333,
+       "v": 1,
+       "ease": "out"
+      }
+     ],
+     "saturation": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 1.35,
+       "ease": "linear"
+      },
+      {
+       "t": 0.5,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "strobe",
+   "name": "Strobe",
+   "tags": [
+    "flash"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "brightness": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "hold"
+      },
+      {
+       "t": 0.03333333333333333,
+       "v": 0.55,
+       "ease": "hold"
+      },
+      {
+       "t": 0.06666666666666667,
+       "v": 0,
+       "ease": "hold"
+      },
+      {
+       "t": 0.1,
+       "v": 0.55,
+       "ease": "hold"
+      },
+      {
+       "t": 0.13333333333333333,
+       "v": 0,
+       "ease": "hold"
+      },
+      {
+       "t": 0.16666666666666666,
+       "v": 0.35,
+       "ease": "hold"
+      },
+      {
+       "t": 0.23333333333333334,
+       "v": 0,
+       "ease": "hold"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "glitch-cor",
+   "name": "Glitch de cor",
+   "tags": [
+    "glitch"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "effects": [
+     {
+      "type": "rgb-split",
+      "params": {
+       "offset": 10
+      }
+     }
+    ],
+    "keyframes": {
+     "saturation": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 1.6,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": 1,
+       "ease": "out"
+      }
+     ],
+     "brightness": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "hold"
+      },
+      {
+       "t": 0.03333333333333333,
+       "v": 0.15,
+       "ease": "hold"
+      },
+      {
+       "t": 0.1,
+       "v": -0.1,
+       "ease": "hold"
+      },
+      {
+       "t": 0.16666666666666666,
+       "v": 0,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "headshot-impact",
+   "name": "Headshot impact (combo)",
+   "tags": [
+    "valorant",
+    "kill",
+    "combo"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "x": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": 0.0075,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": -0.0056,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": 0.0025,
+       "ease": "linear"
+      },
+      {
+       "t": 0.3,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "y": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": 0.0004,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": 0.0035,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": 0.0002,
+       "ease": "linear"
+      },
+      {
+       "t": 0.3,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "rotation": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.067,
+       "v": -0.938,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": 0.641,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": -0.402,
+       "ease": "linear"
+      },
+      {
+       "t": 0.3,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.06666666666666667,
+       "v": 1.14,
+       "ease": "out"
+      },
+      {
+       "t": 0.6,
+       "v": 1,
+       "ease": "out"
+      }
+     ],
+     "blur": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 4,
+       "ease": "linear"
+      },
+      {
+       "t": 0.167,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "brightness": [
+      {
+       "t": 0,
+       "v": 0,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 0.35,
+       "ease": "linear"
+      },
+      {
+       "t": 0.133,
+       "v": 0,
+       "ease": "out"
+      }
+     ],
+     "saturation": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.033,
+       "v": 1.3,
+       "ease": "linear"
+      },
+      {
+       "t": 0.5,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "kill-suave",
+   "name": "Kill suave (combo)",
+   "tags": [
+    "valorant",
+    "kill",
+    "combo"
+   ],
+   "preset": {
+    "kind": "motion",
+    "anchor": "playhead",
+    "keyframes": {
+     "zoom": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "inOut"
+      },
+      {
+       "t": 0.4,
+       "v": 1.1,
+       "ease": "out"
+      },
+      {
+       "t": 1.2,
+       "v": 1,
+       "ease": "out"
+      }
+     ],
+     "saturation": [
+      {
+       "t": 0,
+       "v": 1,
+       "ease": "linear"
+      },
+      {
+       "t": 0.2,
+       "v": 1.25,
+       "ease": "linear"
+      },
+      {
+       "t": 1,
+       "v": 1,
+       "ease": "out"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-cinema",
+   "name": "Look cinema",
+   "tags": [
+    "cor",
+    "cinema"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "lut",
+      "asset": "teal-orange"
+     },
+     {
+      "type": "vignette",
+      "params": {
+       "strength": 0.45
+      }
+     },
+     {
+      "type": "film-grain",
+      "params": {
+       "amount": 10
+      }
+     }
+    ]
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-valorant",
+   "name": "Look Valorant",
+   "tags": [
+    "cor",
+    "gaming"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "lut",
+      "asset": "valorant-punch"
+     },
+     {
+      "type": "sharpen",
+      "params": {
+       "amount": 0.6
+      }
+     }
+    ]
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-vintage",
+   "name": "Look vintage",
+   "tags": [
+    "cor",
+    "retro"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "lut",
+      "asset": "faded-film"
+     },
+     {
+      "type": "film-grain",
+      "params": {
+       "amount": 22
+      }
+     },
+     {
+      "type": "vignette",
+      "params": {
+       "strength": 0.6
+      }
+     }
+    ]
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-pb-drama",
+   "name": "Look P&B dramático",
+   "tags": [
+    "cor",
+    "cinema"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "lut",
+      "asset": "bw-contrast"
+     },
+     {
+      "type": "vignette",
+      "params": {
+       "strength": 0.7
+      }
+     }
+    ]
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-neon",
+   "name": "Look neon noturno",
+   "tags": [
+    "cor",
+    "gaming"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "lut",
+      "asset": "night-neon"
+     },
+     {
+      "type": "color-grade",
+      "params": {
+       "saturation": 1.25,
+       "contrast": 1.1
+      }
+     }
+    ]
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-quente",
+   "name": "Look quente",
+   "tags": [
+    "cor"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "lut",
+      "asset": "warm-cinematic"
+     }
+    ]
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-frio",
+   "name": "Look frio",
+   "tags": [
+    "cor"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "lut",
+      "asset": "cold-blue"
+     }
+    ]
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-vibrante",
+   "name": "Look vibrante",
+   "tags": [
+    "cor"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "lut",
+      "asset": "vibrant-pop"
+     },
+     {
+      "type": "sharpen",
+      "params": {
+       "amount": 0.5
+      }
+     }
+    ]
+   }
+  },
+  {
+   "type": "preset",
+   "id": "look-vhs",
+   "name": "Look VHS",
+   "tags": [
+    "retro"
+   ],
+   "preset": {
+    "kind": "look",
+    "effects": [
+     {
+      "type": "vhs",
+      "params": {}
+     }
+    ]
+   }
+  }
+ ]
+}

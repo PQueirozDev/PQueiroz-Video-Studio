@@ -8,7 +8,9 @@ const shared = { '@shared': resolve(__dirname, 'src/shared') }
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
-    resolve: { alias: shared }
+    resolve: { alias: shared },
+    // mcp.js = servidor MCP das ferramentas do agente (processo separado, roda fora do app.asar).
+    build: { rollupOptions: { input: { index: resolve(__dirname, 'src/main/index.ts'), mcp: resolve(__dirname, 'src/main/agent/mcp.ts') } } }
   },
   preload: {
     plugins: [externalizeDepsPlugin()],

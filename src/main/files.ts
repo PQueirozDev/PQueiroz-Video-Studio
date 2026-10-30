@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { copyFile, stat } from 'node:fs/promises'
 import { basename, extname, join, normalize, relative, resolve, isAbsolute } from 'node:path'
 import type { MediaKind } from '@shared/types'
@@ -62,4 +62,21 @@ export async function safeCopy(src: string, destDir: string, fileName = basename
 
 export async function fileSize(p: string): Promise<number> {
   return (await stat(p)).size
+}
+
+/** Grava um arquivo novo sem nunca sobrescrever (criação exclusiva, com nome livre "x (2).png"). */
+export function writeUnique(dir: string, fileName: string, data: Buffer | string): string {
+  ensureDir(dir)
+  const ext = extname(fileName)
+  const stem = basename(fileName, ext)
+  for (let i = 1; i < 10000; i++) {
+    const candidate = join(dir, i === 1 ? fileName : `${stem} (${i})${ext}`)
+    try {
+      writeFileSync(candidate, data, { flag: 'wx' })
+      return candidate
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'EEXIST') throw err
+    }
+  }
+  throw new Error('Não foi possível reservar um nome de arquivo livre')
 }

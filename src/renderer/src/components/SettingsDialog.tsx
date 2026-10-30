@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { Bot, Cpu, Film, FolderOpen, Palette, Settings2, SlidersHorizontal } from 'lucide-react'
+import { Bot, Cpu, Film, FolderOpen, ImageIcon, Palette, Settings2, SlidersHorizontal } from 'lucide-react'
+import { ProvidersSettings } from './image/ProvidersSettings'
 import type { AqcInfo, EnvCheck, Settings } from '@shared/types'
 import { api, cx } from '@/lib/format'
 import { useStore } from '@/store'
@@ -9,12 +10,13 @@ import { PresetsEditor } from './PresetsEditor'
 import { AboutSection } from './UpdateBadge'
 import { SettingsUsage } from './ClaudeUsage'
 
-type Tab = 'geral' | 'aparencia' | 'claude' | 'presets' | 'ffmpeg' | 'performance'
+type Tab = 'geral' | 'aparencia' | 'claude' | 'imagens' | 'presets' | 'ffmpeg' | 'performance'
 
 const TABS: { id: Tab; label: string; icon: typeof Bot }[] = [
   { id: 'geral', label: 'Geral', icon: Settings2 },
   { id: 'aparencia', label: 'Aparência', icon: Palette },
   { id: 'claude', label: 'Claude', icon: Bot },
+  { id: 'imagens', label: 'Geração de imagens', icon: ImageIcon },
   { id: 'ffmpeg', label: 'FFmpeg', icon: Film },
   { id: 'presets', label: 'Presets', icon: SlidersHorizontal },
   { id: 'performance', label: 'Performance', icon: Cpu }
@@ -80,6 +82,13 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 export function SettingsDialog() {
   const { dialog, setDialog, settings, saveSettings } = useStore()
   const [tab, setTab] = useState<Tab>('geral')
+  const requestedTab = useStore((s) => s.settingsTab)
+  useEffect(() => {
+    if (requestedTab) {
+      setTab(requestedTab as Tab)
+      useStore.setState({ settingsTab: null })
+    }
+  }, [requestedTab])
   const [aqc, setAqc] = useState<AqcInfo | null>(null)
   const [checks, setChecks] = useState<EnvCheck[]>([])
   const open = dialog === 'settings'
@@ -178,6 +187,7 @@ export function SettingsDialog() {
           )}
 
           {tab === 'presets' && <PresetsEditor />}
+          {tab === 'imagens' && <ProvidersSettings />}
 
           {tab === 'performance' && (
             <>

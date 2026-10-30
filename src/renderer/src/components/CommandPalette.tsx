@@ -1,5 +1,5 @@
 import { Command } from 'cmdk'
-import { Bot, Clapperboard, Film, FolderOpen, Home, Import, ListVideo, Plus, RotateCcw, Settings } from 'lucide-react'
+import { Bot, Clapperboard, Compass, Film, FolderOpen, Home, ImageIcon, Import, Keyboard, Library, ListVideo, Plus, RotateCcw, Settings, ShieldCheck, Sparkles } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { api } from '@/lib/format'
 import { useStore } from '@/store'
@@ -40,11 +40,20 @@ export function CommandPalette() {
         <Command.List className="max-h-[380px] overflow-y-auto p-1.5">
           <Command.Empty className="py-8 text-center text-xs text-faint">Nenhum comando encontrado.</Command.Empty>
           <Command.Group heading="Comandos" className={groupClass}>
-            <Item icon={<Plus className="h-4 w-4" />} onSelect={run(() => setDialog('newProject'))}>Novo projeto</Item>
+            <Item icon={<Plus className="h-4 w-4" />} onSelect={run(() => setDialog('newProject'))}>Novo projeto de vídeo</Item>
+            <Item icon={<ImageIcon className="h-4 w-4" />} onSelect={run(() => {
+              useStore.setState({ projectId: null })
+              useStore.getState().setView('image')
+            })}>Nova arte (Image Studio)</Item>
+            <Item icon={<Library className="h-4 w-4" />} onSelect={run(() => useStore.getState().setView('assets'))}>Biblioteca de assets e marcas</Item>
             {projectId && <Item icon={<Import className="h-4 w-4" />} onSelect={run(async () => importPaths(await api.media.pickFiles()))}>Importar vídeo</Item>}
             {projectId && <Item icon={<Clapperboard className="h-4 w-4" />} onSelect={run(() => setDialog('render'))}>Renderizar</Item>}
             {projectId && <Item icon={<Bot className="h-4 w-4" />} onSelect={run(focusChat)}>Falar com Claude</Item>}
             {projectId && <Item icon={<FolderOpen className="h-4 w-4" />} onSelect={run(() => api.projects.openFolder(projectId))}>Abrir pasta do projeto</Item>}
+            {projectId && <Item icon={<Sparkles className="h-4 w-4" />} onSelect={run(() => void window.dispatchEvent(new Event('pq-open-auto')))}>Auto Studio (montar edição automática)</Item>}
+            {projectId && <Item icon={<ShieldCheck className="h-4 w-4" />} onSelect={run(() => void window.dispatchEvent(new Event('pq-open-qc')))}>Quality Check</Item>}
+            {projectId && <Item icon={<Compass className="h-4 w-4" />} onSelect={run(() => void window.dispatchEvent(new Event('pq-editor-tour')))}>Tour do editor</Item>}
+            {projectId && <Item icon={<Keyboard className="h-4 w-4" />} onSelect={run(() => void window.dispatchEvent(new Event('pq-shortcuts')))}>Atalhos do teclado</Item>}
             <Item icon={<ListVideo className="h-4 w-4" />} onSelect={run(() => setDialog('queue'))}>Fila de render</Item>
             <Item icon={<Settings className="h-4 w-4" />} onSelect={run(() => setDialog('settings'))}>Abrir configurações</Item>
             {projectId && <Item icon={<Home className="h-4 w-4" />} onSelect={run(closeProject)}>Ir para o Dashboard</Item>}
@@ -66,7 +75,7 @@ export function CommandPalette() {
           )}
           <Command.Group heading="Projetos" className={groupClass}>
             {projects.map((p) => (
-              <Item key={p.id} icon={<Film className="h-4 w-4" />} onSelect={run(() => openProject(p.id))}>{p.name}</Item>
+              <Item key={p.id} icon={p.kind === 'image' ? <ImageIcon className="h-4 w-4" /> : <Film className="h-4 w-4" />} onSelect={run(() => openProject(p.id))}>{p.name}</Item>
             ))}
           </Command.Group>
         </Command.List>

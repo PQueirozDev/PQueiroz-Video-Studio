@@ -13,6 +13,7 @@ export const PROJECT_DIRS = ['input', 'assets', 'temp', 'output', 'versions'] as
 interface ProjectRow {
   id: string; name: string; path: string; format: string; resolution: string; fps: string; preset: string
   status: string; claude_session_id: string | null; current_version_id: string | null; created_at: number; updated_at: number
+  kind: string | null; brand_id: string | null
 }
 
 function toProject(r: ProjectRow): Project {
@@ -22,7 +23,7 @@ function toProject(r: ProjectRow): Project {
     one<Thumb>("SELECT thumbnail, duration FROM media WHERE project_id = ? AND kind = 'video' ORDER BY sort LIMIT 1", r.id) ??
     one<Thumb>('SELECT thumbnail, duration FROM media WHERE project_id = ? AND thumbnail IS NOT NULL ORDER BY sort LIMIT 1', r.id)
   return {
-    id: r.id, name: r.name, path: r.path,
+    id: r.id, kind: r.kind === 'image' ? 'image' : 'video', brandId: r.brand_id ?? null, name: r.name, path: r.path,
     format: r.format as Project['format'], resolution: r.resolution as Project['resolution'], fps: r.fps as Project['fps'],
     preset: r.preset, status: r.status as Project['status'],
     claudeSessionId: r.claude_session_id, currentVersionId: r.current_version_id,
@@ -66,7 +67,7 @@ export function writeManifest(id: string): void {
   const versions = all('SELECT number, label, path, request, changes, created_at FROM versions WHERE project_id = ? ORDER BY number', id)
   const manifest = {
     app: 'PQueiroz Video Studio', schema: 1,
-    id: p.id, name: p.name, format: p.format, resolution: p.resolution, fps: p.fps, preset: p.preset, status: p.status,
+    id: p.id, kind: p.kind, brandId: p.brandId, name: p.name, format: p.format, resolution: p.resolution, fps: p.fps, preset: p.preset, status: p.status,
     claudeSessionId: p.claudeSessionId, currentVersionId: p.currentVersionId,
     createdAt: p.createdAt, updatedAt: p.updatedAt, media, versions
   }
@@ -82,8 +83,9 @@ export function createProject(input: NewProjectInput): Project {
   for (const d of PROJECT_DIRS) ensureDir(join(dir, d))
   const id = uid()
   const t = now()
-  run(`INSERT INTO projects(id, name, path, format, resolution, fps, preset, status, created_at, updated_at)
-       VALUES(?, ?, ?, ?, ?, ?, ?, 'novo', ?, ?)`, id, name, dir, input.format, input.resolution, input.fps, input.preset, t, t)
+  run(`INSERT INTO projects(id, name, path, format, resolution, fps, preset, status, kind, brand_id, created_at, updated_at)
+       VALUES(?, ?, ?, ?, ?, ?, ?, 'novo', ?, ?, ?, ?)`, id, name, dir, input.format, input.resolution, input.fps, input.preset,
+  input.kind === 'image' ? 'image' : 'video', input.brandId ?? null, t, t)
   writeManifest(id)
   return requireProject(id)
 }
@@ -125,9 +127,10 @@ export function registerExisting(dir: string): Project {
   for (const d of PROJECT_DIRS) ensureDir(join(dir, d))
   const id = uid()
   const t = now()
-  run(`INSERT INTO projects(id, name, path, format, resolution, fps, preset, status, claude_session_id, created_at, updated_at)
-       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  run(`INSERT INTO projects(id, name, path, format, resolution, fps, preset, status, claude_session_id, kind, brand_id, created_at, updated_at)
+       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     id, manifest.name ?? basename(dir), dir, manifest.format ?? '9:16', manifest.resolution ?? '1080p', manifest.fps ?? 'original',
-    manifest.preset ?? 'nenhum', manifest.status ?? 'novo', manifest.claudeSessionId ?? null, manifest.createdAt ?? t, t)
+    manifest.preset ?? 'nenhum', manifest.status ?? 'novo', manifest.claudeSessionId ?? null,
+    manifest.kind === 'image' || existsSync(join(dir, 'design.json')) ? 'image' : 'video', manifest.brandId ?? null, manifest.createdAt ?? t, t)
   return requireProject(id)
 }

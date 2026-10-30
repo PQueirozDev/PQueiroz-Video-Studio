@@ -12,6 +12,8 @@ import { RenderQueue } from './components/RenderQueue'
 import { SettingsDialog } from './components/SettingsDialog'
 import { CommandPalette } from './components/CommandPalette'
 import { Toasts } from './components/ui'
+import { ImageStudio } from './components/image/ImageStudio'
+import { AssetsPage } from './components/image/AssetsPage'
 
 export function App() {
   const { view, settings, onClaudeEvent, onRender, setPalette } = useStore()
@@ -24,7 +26,7 @@ export function App() {
     })
     const offTask = api.media.onTask((t) => {
       useStore.setState((s) => ({ task: { ...s.task, [t.projectId]: t.done ? undefined : { text: t.text, progress: t.progress } } }))
-      if (t.error) useStore.getState().toast(`Montagem falhou: ${t.error}`, 'bad')
+      if (t.error) useStore.getState().toast(`Tarefa falhou: ${t.error}`, 'bad')
     })
     api.render.list().then((renders) => useStore.setState({ renders }))
     const onKey = (e: KeyboardEvent): void => {
@@ -66,7 +68,9 @@ export function App() {
       ) : (
         <>
           <TitleBar />
-          <div className="min-h-0 flex-1">{view === 'dashboard' ? <Dashboard /> : <Workspace />}</div>
+          <div className="min-h-0 flex-1">
+            {view === 'dashboard' ? <Dashboard /> : view === 'image' ? <ImageStudio /> : view === 'assets' ? <AssetsPage /> : <Workspace />}
+          </div>
         </>
       )}
       <NewProjectDialog />

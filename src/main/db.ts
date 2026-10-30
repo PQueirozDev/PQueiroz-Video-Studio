@@ -6,6 +6,9 @@ import { app } from 'electron'
 let db: DatabaseSync | null = null
 
 const SCHEMA = `
+CREATE TABLE IF NOT EXISTS timeline_history (project_id TEXT PRIMARY KEY, past TEXT NOT NULL DEFAULT '[]', future TEXT NOT NULL DEFAULT '[]');
+CREATE TABLE IF NOT EXISTS compositions (project_id TEXT PRIMARY KEY, doc TEXT NOT NULL, past TEXT NOT NULL DEFAULT '[]', future TEXT NOT NULL DEFAULT '[]', updated_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS subtitles (project_id TEXT NOT NULL, source TEXT NOT NULL, document TEXT NOT NULL, PRIMARY KEY(project_id, source));
 CREATE TABLE IF NOT EXISTS settings (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
@@ -86,6 +89,35 @@ CREATE TABLE IF NOT EXISTS runs (
   started_at INTEGER NOT NULL,
   request TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS brands (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  data TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS image_projects (
+  project_id TEXT PRIMARY KEY REFERENCES projects(id),
+  brand_id TEXT,
+  format_id TEXT NOT NULL,
+  original_prompt TEXT NOT NULL DEFAULT '',
+  style TEXT NOT NULL DEFAULT 'premium-3d',
+  provider TEXT NOT NULL DEFAULT 'composition',
+  last_export TEXT,
+  revision INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS image_generations (
+  request_key TEXT PRIMARY KEY,
+  project_id TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  path TEXT,
+  created_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS secrets (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS styles (id TEXT PRIMARY KEY, name TEXT NOT NULL, brand_id TEXT, data TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS presets (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
@@ -101,7 +133,14 @@ const MIGRATIONS: [table: string, column: string, type: string][] = [
   ['media', 'trim_in', 'REAL'],
   ['media', 'trim_out', 'REAL'],
   ['media', 'in_timeline', 'INTEGER NOT NULL DEFAULT 1'],
-  ['media', 'proxy', 'TEXT']
+  ['media', 'proxy', 'TEXT'],
+  ['versions', 'favorite', 'INTEGER NOT NULL DEFAULT 0'],
+  ['renders', 'remaining_seconds', 'REAL'],
+  ['renders', 'estimated_bytes', 'REAL'],
+  ['renders', 'notice', 'TEXT'],
+  ['projects', 'kind', "TEXT NOT NULL DEFAULT 'video'"],
+  ['projects', 'brand_id', 'TEXT'],
+  ['projects', 'style_id', 'TEXT']
 ]
 
 function migrate(d: DatabaseSync): void {

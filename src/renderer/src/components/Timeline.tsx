@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Eye, EyeOff, Film, GripVertical, Image as ImageIcon, Layers, Music, Scissors, Undo2 } from 'lucide-react'
+import { Eye, EyeOff, Film, GripVertical, Image as ImageIcon, Layers, Music, Scissors, Undo2, Redo2 } from 'lucide-react'
+import { Waveform } from './Waveform'
 import type { EditTimeline, MediaItem } from '@shared/types'
 import { api, cx, fmtTime, fmtTimePrecise, mediaUrl } from '@/lib/format'
 import { useStore } from '@/store'
@@ -11,7 +12,7 @@ import { Button, Progress } from './ui'
 
 const MIN_PX_PER_SEC = 14
 const MAX_PX_PER_SEC = 90
-const MIN_W = 90
+const MIN_W = 2
 
 const span = (m: MediaItem): number => Math.max(0.2, (m.trimOut ?? m.duration ?? 4) - (m.trimIn ?? 0))
 const isTrimmed = (m: MediaItem): boolean => m.trimIn != null || m.trimOut != null
@@ -48,13 +49,13 @@ function TrimEditor({ m }: { m: MediaItem }) {
 
   const save = async (inV: number | null, outV: number | null): Promise<void> => {
     if (!projectId) return
-    await api.media.setTrim(projectId, m.id, inV, outV)
-    await refreshMedia()
+    try { await api.media.setTrim(projectId, m.id, inV, outV); await refreshMedia() }
+    catch (err) { useStore.getState().toast((err as Error).message, 'bad') }
   }
   const toggle = async (): Promise<void> => {
     if (!projectId) return
-    await api.media.setInTimeline(projectId, m.id, !m.inTimeline)
-    await refreshMedia()
+    try { await api.media.setInTimeline(projectId, m.id, !m.inTimeline); await refreshMedia() }
+    catch (err) { useStore.getState().toast((err as Error).message, 'bad') }
   }
   const seek = (t: number): void => useStore.setState((s) => ({ seekRequest: { t, n: (s.seekRequest?.n ?? 0) + 1 } }))
 
@@ -88,6 +89,31 @@ export function Timeline() {
   const [edit, setEdit] = useState<EditTimeline | null>(null)
   const [dragId, setDragId] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
+  const [history, setHistory] = useState({ undo: false, redo: false })
+  const [zoom, setZoom] = useState(1)
+  const [busy, setBusy] = useState(false)
+  useEffect(() => {
+    let alive = true
+    if (projectId) api.media.history(projectId).then((h) => { if (alive) setHistory(h) }).catch(() => {})
+    return () => { alive = false }
+  }, [projectId, media])
+  const travel = async (direction: 'undo' | 'redo'): Promise<void> => {
+    if (!projectId || busy) return
+    setBusy(true)
+    try { setHistory(await api.media[direction](projectId)); await refreshMedia() }
+    catch (err) { toast((err as Error).message, 'bad') }
+    finally { setBusy(false) }
+  }
+  useEffect(() => {
+    const key = (e: KeyboardEvent): void => {
+      const el = e.target as HTMLElement
+      if (el.closest('input, textarea, select, [contenteditable="true"]') || !(e.ctrlKey || e.metaKey)) return
+      const direction = e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey) ? 'redo' : e.key.toLowerCase() === 'z' ? 'undo' : null
+      if (direction) { e.preventDefault(); if (history[direction]) void travel(direction) }
+    }
+    window.addEventListener('keydown', key)
+    return () => window.removeEventListener('keydown', key)
+  }, [projectId, history, busy])
   const current = projectId ? task[projectId] : undefined
   const sel = media.find((m) => m.id === selected)
   // Escala que faz a trilha mais longa caber na largura do painel (com limites).
@@ -115,7 +141,7 @@ export function Timeline() {
       const src = useStore.getState().source
       if (src?.kind !== 'media' || src.id !== sel.id) return
       const t = useStore.getState().playerTime
-      api.media.setTrim(projectId, sel.id, k === 'i' ? t : sel.trimIn, k === 'o' ? t : sel.trimOut).then(refreshMedia)
+      api.media.setTrim(projectId, sel.id, k === 'i' ? t : sel.trimIn, k === 'o' ? t : sel.trimOut).then(refreshMedia).catch((err) => toast(err.message, 'bad'))
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -127,9 +153,8 @@ export function Timeline() {
     const from = ids.indexOf(dragId)
     const to = ids.indexOf(targetId)
     ids.splice(to, 0, ids.splice(from, 1)[0])
-    useStore.setState({ media: ids.map((id) => media.find((m) => m.id === id)!) })
-    await api.media.reorder(projectId, ids)
-    await refreshMedia()
+    try { await api.media.reorder(projectId, ids); await refreshMedia() }
+    catch (err) { toast((err as Error).message, 'bad') }
   }
 
   const assemble = async (): Promise<void> => {
@@ -174,6 +199,7 @@ export function Timeline() {
       title={`${m.name} — clique para editar, arraste para reordenar`}
     >
       {m.thumbnail && <img src={mediaUrl(m.thumbnail)} className="absolute inset-0 h-full w-full object-cover opacity-25" alt="" />}
+      {m.hasAudio && projectId && <Waveform item={m} projectId={projectId} />}
       <GripVertical className="relative h-3 w-3 shrink-0 opacity-50" />
       <span className="relative truncate font-medium">{m.name}</span>
       {isTrimmed(m) && <Scissors className="relative h-3 w-3 shrink-0 text-accent" />}
@@ -186,11 +212,18 @@ export function Timeline() {
   const images = media.filter((m) => m.kind === 'image')
   const total = videos.filter((m) => m.inTimeline).reduce((s, m) => s + span(m), 0)
   const longest = Math.max(1, videos.reduce((s, m) => s + span(m), 0), ...audios.map(span), edit?.duration ?? 0)
-  const PX_PER_SEC = Math.max(MIN_PX_PER_SEC, Math.min(MAX_PX_PER_SEC, (width - 100) / longest))
+  const PX_PER_SEC = Math.max(MIN_PX_PER_SEC, Math.min(MAX_PX_PER_SEC, (width - 100) / longest)) * zoom
+  const rulerWidth = Math.max(width - 88, longest * PX_PER_SEC)
+  const tickStep = Math.max(PX_PER_SEC < 30 ? 5 : PX_PER_SEC < 70 ? 2 : 1, Math.ceil(longest / 500))
 
   return (
     <div className="space-y-2 p-3">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-panel-2 p-2">
+        <div className="flex gap-1">
+          <Button size="sm" variant="ghost" title="Desfazer (Ctrl+Z)" disabled={!history.undo || busy} onClick={() => travel('undo')}><Undo2 className="h-3.5 w-3.5" />Desfazer</Button>
+          <Button size="sm" variant="ghost" title="Refazer (Ctrl+Shift+Z)" disabled={!history.redo || busy} onClick={() => travel('redo')}><Redo2 className="h-3.5 w-3.5" />Refazer</Button>
+        </div>
+        <label className="flex items-center gap-2 text-[11px] text-muted">Zoom<input aria-label="Zoom da timeline" type="range" min={0.5} max={4} step={0.25} value={zoom} onChange={(e) => setZoom(Number(e.target.value))} className="w-20" /><span className="font-mono">{zoom}×</span></label>
         <span className="text-xs text-muted">Duração montada: <span className="font-mono text-fg">{fmtTimePrecise(total)}</span></span>
         <span className="text-[11px] text-faint">Clique num clipe para aparar (I/O marcam no player) · arraste para reordenar</span>
         <div className="ml-auto flex items-center gap-2">
@@ -209,12 +242,15 @@ export function Timeline() {
       {sel && <TrimEditor m={sel} />}
 
       <div ref={tracksRef} className="space-y-2 overflow-x-auto pb-1">
+        <div className="relative ml-[88px] h-6 border-b border-line font-mono text-[9px] text-faint" style={{ width: rulerWidth }}>
+          {Array.from({ length: Math.ceil(longest / tickStep) + 1 }, (_, i) => <span key={i} className="absolute bottom-0 border-l border-line-2 pl-1 pb-1" style={{ left: i * tickStep * PX_PER_SEC }}>{fmtTime(i * tickStep)}</span>)}
+        </div>
         {edit && edit.segments.length > 0 && (
           <Track label="Edição" icon={<Scissors className="h-3 w-3" />}>
             {edit.segments.map((s, i) => {
               const d = (edit.cuts[i + 1] ?? edit.duration) - (edit.cuts[i] ?? 0)
               return (
-                <div key={i} style={{ width: Math.max(56, d * PX_PER_SEC) }}
+                <div key={i} style={{ width: Math.max(MIN_W, d * PX_PER_SEC) }}
                   className="flex shrink-0 flex-col justify-center overflow-hidden rounded border border-accent/40 bg-accent/15 px-1.5 text-[10.5px]"
                   title={`${s}: ${fmtTime(edit.cuts[i])} – ${fmtTime(edit.cuts[i + 1])}`}>
                   <span className="truncate font-medium text-fg">{s}</span>

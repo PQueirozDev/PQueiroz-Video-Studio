@@ -1,5 +1,11 @@
-import { existsSync } from 'node:fs'
-import { app, BrowserWindow, dialog, ipcMain, Notification, shell } from 'electron'
+import { existsSync, readFileSync } from 'node:fs'
+import { emptySubtitles, parseSrt, toSrt } from '@shared/subtitles'
+import { editWithHistory, historyState, travelHistory } from './media/history'
+import { waveform } from './media/waveform'
+import { loadSubtitles, saveSubtitles, subtitleFile, reloadGeneratedSubtitles, writeSubtitleExport } from './media/subtitles'
+import { app, BrowserWindow, dialog, ipcMain, Notification, shell, type IpcMainInvokeEvent } from 'electron'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { getClaudeUsage, onUsageUpdate } from './claude/usage'
 import { checkForUpdates, installUpdate, updateState } from './updater'
 import type { AssetCategory, ClaudeEvent, Settings } from '@shared/types'
@@ -16,9 +22,24 @@ import {
 } from './projects/projects'
 import { cancelRender, clearFinished, enqueueRender, getJob, listRenders, onRenderUpdate } from './render/queue'
 import { getSettings, updateSettings } from './settings'
+import { editComposition, getComposition, resetComposition, travelComposition } from './composition/store'
+import { EFFECTS, TRANSITIONS } from '@shared/fx'
+import { CATEGORIES } from './assets/library'
+import { log } from './log'
+import { registerAnalysisIpc } from './analysis/ipc'
+import { listLuts } from './assets/luts'
+import { renderPreview } from './render/preview'
+import { fxPreview } from './render/fxPreview'
+import { colorMatch } from './render/colorMatch'
+import { runAutoStudio } from './auto/autoStudio'
+import { checkProject, checkProjectRender } from './qc/qc'
+import { applyStyleToProject, deleteStyle, learnFromProject, listStyles, projectStyle, setProjectStyle, updateStyle } from './styles/styles'
+import type { AutoStudioRequest } from '@shared/api'
+import { exportPackFolder, hubItems, installPack, packInfos, removePack, useHubItem } from './packs/packs'
+import { registerImageIpc } from './image/ipc'
 import { aqcInfo } from './skills/aqc'
 import { clearToolCache } from './tools'
-import { duplicateVersion, getVersion, listVersions, restoreVersion } from './versions/versions'
+import { duplicateVersion, favoriteVersion, getVersion, listVersions, restoreVersion } from './versions/versions'
 
 function broadcast(channel: string, payload: unknown): void {
   for (const w of BrowserWindow.getAllWindows()) w.webContents.send(channel, payload)
@@ -29,8 +50,35 @@ function notify(title: string, body: string): void {
   if (!focused && getSettings().notifications && Notification.isSupported()) new Notification({ title, body }).show()
 }
 
+// Só a página do próprio app (o index.html empacotado ou a origem do servidor de desenvolvimento),
+// no quadro principal, pode chamar o processo principal.
+export function isAppUrl(raw: string): boolean {
+  try {
+    const url = new URL(raw)
+    const dev = process.env.ELECTRON_RENDERER_URL
+    if (dev) return url.origin === new URL(dev).origin
+    return url.protocol === 'file:' && url.pathname === pathToFileURL(join(__dirname, '../renderer/index.html')).pathname
+  } catch {
+    return false
+  }
+}
+const trustedSender = (e: IpcMainInvokeEvent): boolean => !!e.senderFrame && e.senderFrame === e.sender.mainFrame && isAppUrl(e.senderFrame.url)
+
 const handle = (channel: string, fn: (...args: any[]) => unknown): void => {
-  ipcMain.handle(channel, (_e, ...args) => fn(...args))
+  ipcMain.handle(channel, async (e, ...args) => {
+    if (!trustedSender(e)) throw new Error('Origem não autorizada.')
+    try {
+      return await fn(...args)
+    } catch (err) {
+      log.warn('ipc.error', { channel, error: (err as Error).message })
+      throw err
+    }
+  })
+}
+
+const assetCategory = (c: unknown): AssetCategory => {
+  if (!CATEGORIES.includes(c as AssetCategory)) throw new Error('Categoria de biblioteca inválida.')
+  return c as AssetCategory
 }
 
 export function registerIpc(): void {
@@ -98,7 +146,11 @@ export function registerIpc(): void {
     const paths = await pickMedia()
     return paths.length ? importMedia(projectId, paths) : { imported: [], skipped: [] }
   })
-  handle('media:reorder', (projectId, ids: string[]) => reorderMedia(projectId, ids))
+  handle('media:reorder', (projectId, ids: string[]) => editWithHistory(projectId, () => reorderMedia(projectId, ids)))
+  handle('media:history', historyState)
+  handle('media:undo', (id) => travelHistory(id, 'undo'))
+  handle('media:redo', (id) => travelHistory(id, 'redo'))
+  handle('media:waveform', waveform)
   handle('media:remove', (projectId, id) => removeMedia(projectId, id))
   handle('media:timeline', (projectId) => editTimeline(projectId))
 
@@ -127,6 +179,7 @@ export function registerIpc(): void {
 
   // Versões
   handle('versions:list', (projectId) => listVersions(projectId))
+  handle('versions:favorite', favoriteVersion)
   handle('versions:restore', (projectId, versionId) => restoreVersion(projectId, versionId))
   handle('versions:duplicate', (projectId, versionId) => duplicateVersion(projectId, versionId))
   handle('versions:reveal', (versionId) => {
@@ -142,6 +195,11 @@ export function registerIpc(): void {
   })
   handle('render:enqueue', (projectId, input, settings) => enqueueRender(projectId, input, settings))
   handle('render:list', () => listRenders())
+  handle('render:retry', (id) => {
+    const job = getJob(id)
+    if (!job || !['erro', 'cancelado'].includes(job.status)) throw new Error('Este render não pode ser repetido.')
+    return enqueueRender(job.projectId, { path: job.input, label: job.label }, job.settings)
+  })
   handle('render:cancel', (id) => cancelRender(id))
   handle('render:reveal', (id) => {
     const job = getJob(id)
@@ -154,19 +212,89 @@ export function registerIpc(): void {
   handle('presets:remove', (id: string) => deletePreset(id))
 
   // Timeline manual
-  handle('media:setTrim', (projectId, id, a, b) => setTrim(projectId, id, a, b))
-  handle('media:setInTimeline', (projectId, id, on: boolean) => setInTimeline(projectId, id, on))
+  handle('media:setTrim', (projectId, id, a, b) => editWithHistory(projectId, () => setTrim(projectId, id, a, b)))
+  handle('media:setInTimeline', (projectId, id, on: boolean) => editWithHistory(projectId, () => setInTimeline(projectId, id, on)))
   handle('media:assemble', (projectId) => assembleTimeline(projectId))
+
+  // Composição (trilhas, clipes, transições, efeitos)
+  handle('composition:get', (projectId: string) => getComposition(projectId))
+  handle('composition:edit', (projectId: string, commands) => editComposition(projectId, commands))
+  handle('composition:undo', (projectId: string) => travelComposition(projectId, 'undo'))
+  handle('composition:redo', (projectId: string) => travelComposition(projectId, 'redo'))
+  handle('composition:reset', (projectId: string) => resetComposition(projectId))
+  handle('composition:renderPreview', (projectId: string, start: number, seconds: number, bypass?: boolean) => renderPreview(projectId, start, seconds, bypass === true))
+  handle('composition:colorMatch', (projectId: string, clipId: string, refClipId: string) => {
+    if (typeof clipId !== 'string' || typeof refClipId !== 'string') throw new Error('Clipe inválido.')
+    return colorMatch(projectId, clipId, refClipId)
+  })
+  handle('composition:fxPreview', (kind: 'transition' | 'effect' | 'lut', id: string) => {
+    if (!['transition', 'effect', 'lut'].includes(kind)) throw new Error('Prévia inválida.')
+    return fxPreview(kind, id)
+  })
+  handle('composition:luts', () => listLuts().map(({ id, name, builtIn }) => ({ id, name, builtIn })))
+  handle('composition:catalog', () => ({
+    transitions: TRANSITIONS.map(({ xfade: _x, ...t }) => t),
+    effects: EFFECTS.map(({ filter: _f, ...e }) => e)
+  }))
+  registerAnalysisIpc(handle)
+  bus.on('composition:changed', (e: MediaChanged) => broadcast('composition:changed', e.projectId))
   bus.on('media:changed', (e: MediaChanged) => broadcast('media:changed', e.projectId))
   bus.on('task:progress', (e: TaskProgress) => {
     broadcast('task:progress', e)
-    if (e.done && !e.error) notify('Timeline montada', getProject(e.projectId)?.name ?? '')
+    const titles = { animacao: 'Arte animada', montagem: 'Timeline montada', analise: 'Análise concluída', transcricao: 'Transcrição pronta', download: 'Download concluído' }
+    if (e.done && !e.error) notify(titles[e.task], getProject(e.projectId)?.name ?? '')
   })
 
   // Biblioteca de assets
+  handle('subtitles:load', loadSubtitles)
+  handle('subtitles:save', saveSubtitles)
+  handle('subtitles:target', subtitleFile)
+  handle('subtitles:generated', reloadGeneratedSubtitles)
+  handle('subtitles:import', async (id, source) => {
+    const r = await dialog.showOpenDialog({ title: 'Importar legendas SRT', properties: ['openFile'], filters: [{ name: 'Legendas', extensions: ['srt'] }] })
+    return r.canceled ? null : saveSubtitles(id, source, { ...emptySubtitles(), cues: parseSrt(readFileSync(r.filePaths[0], 'utf8')) })
+  })
+  handle('subtitles:export', async (doc) => {
+    const text = toSrt(doc)
+    const r = await dialog.showSaveDialog({ title: 'Exportar legendas', defaultPath: 'legendas.srt', filters: [{ name: 'Legendas', extensions: ['srt'] }] })
+    if (r.canceled || !r.filePath) return false
+    writeSubtitleExport(r.filePath, text)
+    return true
+  })
+  handle('auto:run', (projectId: string, req: AutoStudioRequest) => runAutoStudio(projectId, req))
+  handle('qc:project', (projectId: string, presetId?: string) => checkProject(projectId, typeof presetId === 'string' ? presetId : undefined))
+  handle('qc:render', (projectId: string, opts?: { path?: string; presetId?: string }) => checkProjectRender(projectId, { path: typeof opts?.path === 'string' ? opts.path : undefined, presetId: typeof opts?.presetId === 'string' ? opts.presetId : undefined }))
+  handle('styles:list', () => listStyles())
+  handle('styles:learn', (projectId: string, input: { name: string; brandId?: string | null; notes?: string; replaceId?: string }) => learnFromProject(projectId, input ?? { name: '' }))
+  handle('styles:update', (id: string, patch: { name?: string; brandId?: string | null; notes?: string }) => updateStyle(id, patch ?? {}))
+  handle('styles:remove', (id: string) => deleteStyle(String(id)))
+  handle('styles:project', (projectId: string) => projectStyle(projectId))
+  handle('styles:setProject', (projectId: string, patch: { brandId?: string | null; styleId?: string | null }) => setProjectStyle(projectId, patch ?? {}))
+  handle('styles:apply', (projectId: string, styleId: string) => applyStyleToProject(projectId, String(styleId)))
+  handle('hub:packs', () => packInfos())
+  handle('hub:items', () => hubItems())
+  handle('hub:use', (projectId: string, key: string) => useHubItem(projectId, key))
+  handle('hub:install', async () => {
+    const r = await dialog.showOpenDialog({ title: 'Instalar pacote do Asset Hub', properties: ['openFile'], filters: [{ name: 'Pacote PQueiroz Studio', extensions: ['pqs-pack', 'zip'] }] })
+    if (r.canceled || !r.filePaths[0]) return null
+    return installPack(r.filePaths[0])
+  })
+  handle('hub:remove', (id: string) => {
+    if (typeof id !== 'string') throw new Error('Pacote inválido.')
+    removePack(id)
+  })
+  handle('hub:exportFolder', async () => {
+    const src = await dialog.showOpenDialog({ title: 'Pasta do pacote (com pack.json)', properties: ['openDirectory'] })
+    if (src.canceled || !src.filePaths[0]) return null
+    const dest = await dialog.showSaveDialog({ title: 'Salvar pacote', defaultPath: src.filePaths[0] + '.pqs-pack', filters: [{ name: 'Pacote PQueiroz Studio', extensions: ['pqs-pack'] }] })
+    if (dest.canceled || !dest.filePath) return null
+    const r = exportPackFolder(src.filePaths[0], dest.filePath)
+    return { path: dest.filePath, ...r }
+  })
   handle('assets:list', () => listAssets())
-  handle('assets:add', (category: AssetCategory, paths: string[]) => addAssets(category, paths))
+  handle('assets:add', (category: AssetCategory, paths: string[]) => addAssets(assetCategory(category), paths))
   handle('assets:pickAndAdd', async (category: AssetCategory) => {
+    assetCategory(category)
     const r = await dialog.showOpenDialog({ title: `Adicionar à biblioteca — ${category}`, properties: ['openFile', 'multiSelections'] })
     return r.canceled ? { added: 0, skipped: [] } : addAssets(category, r.filePaths)
   })
@@ -174,4 +302,7 @@ export function registerIpc(): void {
   handle('assets:openFolder', async () => {
     await shell.openPath(libraryRoot())
   })
+
+  // Image Studio
+  registerImageIpc(handle)
 }

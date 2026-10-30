@@ -1,8 +1,13 @@
 import { create } from 'zustand'
-import type { ChatMessage, ClaudeEvent, MediaItem, Preset, Project, RenderJob, Settings, Version } from '@shared/types'
+import type { ChatMessage, ClaudeEvent, MediaItem, Preset, Project, RenderJob, Settings, Version, SubtitleDocument } from '@shared/types'
 import { api } from './lib/format'
 
-export type View = 'splash' | 'onboarding' | 'dashboard' | 'project'
+export type View = 'splash' | 'onboarding' | 'dashboard' | 'project' | 'image' | 'assets'
+
+/** Executados antes de cada envio ao Claude (ex.: o Image Studio grava o design e a prévia). */
+export const sendHooks: Array<(projectId: string) => Promise<void>> = []
+/** Executados quando o Claude termina um turno. */
+export const doneHooks: Array<(e: Extract<ClaudeEvent, { type: 'done' }>) => void> = []
 export type Dialog = null | 'newProject' | 'render' | 'settings' | 'queue'
 
 /** O que está no player: um arquivo de mídia, uma versão ou nada. */
@@ -20,6 +25,12 @@ interface LiveChat {
 interface Toast { id: number; text: string; tone: 'ok' | 'bad' | 'info' }
 
 interface State {
+  compareA: Source
+  /** Aba a abrir no diálogo de configurações (ex.: 'imagens'). */
+  settingsTab: string | null
+  compareB: Source
+  region: { source: Exclude<Source, null>; start: number; end: number } | null
+  subtitlePreview: { path: string; document: SubtitleDocument } | null
   view: View
   dialog: Dialog
   paletteOpen: boolean
@@ -67,6 +78,11 @@ const emptyLive = (): LiveChat => ({ running: false, status: '', messageId: null
 let toastSeq = 0
 
 export const useStore = create<State>((set, get) => ({
+  compareA: null,
+  settingsTab: null,
+  compareB: null,
+  region: null,
+  subtitlePreview: null,
   view: 'splash',
   dialog: null,
   paletteOpen: false,
@@ -90,7 +106,7 @@ export const useStore = create<State>((set, get) => ({
   setView: (view) => set({ view }),
   setDialog: (dialog) => set({ dialog }),
   setPalette: (paletteOpen) => set({ paletteOpen }),
-  setSource: (source) => set({ source }),
+  setSource: (source) => set({ source, region: null, playerTime: 0, seekRequest: null }),
   setCompare: (compare) => set({ compare }),
   toast: (text, tone = 'info') => {
     const id = ++toastSeq
@@ -114,10 +130,20 @@ export const useStore = create<State>((set, get) => ({
     ])
     const project = await api.projects.get(id)
     if (!project) return
+    if (project.kind === 'image') {
+      // O editor do Image Studio cuida do resto (design, marca, provedores).
+      set((s) => ({
+        projectId: id, media, versions, messages, view: 'image', source: null, compare: false, region: null,
+        live: s.live[id] ? s.live : { ...s.live, [id]: { ...emptyLive(), running, status: running ? 'Claude está trabalhando...' : '' } }
+      }))
+      get().saveSettings({ lastProjectId: id })
+      get().loadProjects()
+      return
+    }
     const current = versions.find((v) => v.id === project.currentVersionId)
     const firstVideo = media.find((m) => m.kind === 'video')
     set((s) => ({
-      projectId: id, media, versions, messages, view: 'project', compare: false,
+      projectId: id, media, versions, messages, view: 'project', compare: false, compareA: null, compareB: null, region: null, subtitlePreview: null, playerTime: 0, seekRequest: null,
       source: current ? { kind: 'version', id: current.id } : firstVideo ? { kind: 'media', id: firstVideo.id } : null,
       live: s.live[id] ? s.live : { ...s.live, [id]: { ...emptyLive(), running, status: running ? 'Claude está trabalhando...' : '' } }
     }))
@@ -125,7 +151,7 @@ export const useStore = create<State>((set, get) => ({
     get().loadProjects()
   },
   closeProject: () => {
-    set({ projectId: null, view: 'dashboard', media: [], versions: [], messages: [], source: null })
+    set({ projectId: null, view: 'dashboard', media: [], versions: [], messages: [], source: null, region: null, subtitlePreview: null, compare: false, compareA: null, compareB: null })
     get().saveSettings({ lastProjectId: null })
     get().loadProjects()
   },
@@ -161,12 +187,18 @@ export const useStore = create<State>((set, get) => ({
   sendChat: async (text) => {
     const id = get().projectId
     if (!id || !text.trim()) return
+    const region = get().region
+    if (region) {
+      const item = region.source.kind === 'version' ? get().versions.find((v) => v.id === region.source.id) : get().media.find((m) => m.id === region.source.id)
+      if (item) text = `No arquivo ${JSON.stringify(item.path)}, trecho de ${region.start.toFixed(3)} s a ${region.end.toFixed(3)} s (tempos no arquivo de origem):\n${text}`
+    }
     const optimistic: ChatMessage = { id: `tmp-${Date.now()}`, projectId: id, role: 'user', content: text, activity: [], createdAt: Date.now() }
     set((s) => ({
       messages: [...s.messages, optimistic],
       live: { ...s.live, [id]: { ...emptyLive(), running: true, status: 'Claude está analisando o projeto...', startedAt: Date.now() } }
     }))
     try {
+      for (const hook of sendHooks) await hook(id)
       await api.chat.send(id, text)
     } catch (err) {
       set((s) => ({ live: { ...s.live, [id]: emptyLive() } }))
@@ -188,7 +220,12 @@ export const useStore = create<State>((set, get) => ({
         break
       case 'done': {
         set((s) => ({ live: { ...s.live, [e.projectId]: emptyLive() } }))
-        if (get().projectId === e.projectId) {
+        for (const hook of doneHooks) hook(e)
+        if (get().projectId === e.projectId && get().projects.find((p) => p.id === e.projectId)?.kind === 'image') {
+          api.chat.history(e.projectId).then((messages) => set({ messages }))
+          api.versions.list(e.projectId).then((versions) => set({ versions }))
+          if (e.versions.length) get().toast(`Nova versão: ${e.versions.map((v) => v.label).join(', ')}`, 'ok')
+        } else if (get().projectId === e.projectId) {
           api.chat.history(e.projectId).then((messages) => set({ messages }))
           api.versions.list(e.projectId).then((versions) => {
             set({ versions })

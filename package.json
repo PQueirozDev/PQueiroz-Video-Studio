@@ -1,12 +1,14 @@
 {
   "name": "pqueiroz-video-studio",
   "productName": "PQueiroz Video Studio",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Central de edição de vídeos assistida por IA: projetos, preview, versões e render, com o Claude Code usando o seu fluxo de edição.",
   "author": "Pedro Queiroz",
   "private": true,
   "main": "out/main/index.js",
   "scripts": {
+    "test": "node scripts/verify-studio.mjs && node scripts/verify-render.mjs",
+    "test:render": "node scripts/verify-render.mjs",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "start": "electron-vite preview",
@@ -75,6 +77,14 @@
     ],
     "extraResources": [
       {
+        "from": "resources/luts",
+        "to": "luts"
+      },
+      {
+        "from": "resources/packs",
+        "to": "packs"
+      },
+      {
         "from": "build/icon.ico",
         "to": "icon.ico"
       },
@@ -101,7 +111,10 @@
         "python3",
         "python3-venv"
       ]
-    }
+    },
+    "asarUnpack": [
+      "out/main/mcp.js"
+    ]
   },
   "dependencies": {
     "electron-updater": "^6.8.9"

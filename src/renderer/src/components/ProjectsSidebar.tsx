@@ -24,7 +24,7 @@ export function ProjectsSidebar() {
         </IconButton>
       </div>
       <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto p-1.5">
-        {projects.map((p) => (
+        {projects.filter((p) => p.kind === 'video').map((p) => (
           <div
             key={p.id}
             onClick={() => p.id !== projectId && openProject(p.id)}

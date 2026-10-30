@@ -1,4 +1,7 @@
 import { join } from 'node:path'
+import { projectStyle } from '../styles/styles'
+import { getBrand } from '../image/brands'
+import { describeStyle } from '@shared/style'
 import type { Project } from '@shared/types'
 import { listAssets } from '../assets/library'
 import { LOGO_MARGIN_PX } from '../skills/template'
@@ -87,6 +90,17 @@ O estúdio mostra esse bloco como uma lista com o botão "Executar edição". Pe
 restaurar V2
 \`\`\``)
 
+  parts.push(`## Ferramentas do editor (timeline do estúdio)
+
+Você tem ferramentas \`mcp__pqstudio__*\` que editam a **timeline do editor do estúdio** (a mesma que o Pedro vê e mexe), com validação e desfazer:
+- \`estado_projeto\` (comece por ela), \`catalogo\` (transições, efeitos, LUTs, títulos, sons, overlays, presets e fontes do Asset Hub);
+- \`editar_timeline\` (lista de comandos numa etapa só; "$N" referencia o id criado pelo comando N do lote), \`desfazer\`;
+- \`analisar_midia\`, \`melhores_momentos\`, \`auto_studio\` (montagem completa: gaming, shorts, vlog, cinema);
+- \`usar_asset\` (sons, overlays, templates de título, presets), \`transcrever\` + \`legendas_na_timeline\`;
+- \`gerar_versao\` (renderiza a timeline numa nova versão).
+
+Quando o pedido for sobre a edição na timeline (cortar, ordenar, efeitos, títulos, legendas, sons, cor, velocidade, montagem automática), **use essas ferramentas** em vez de arquivos/ffmpeg: o resultado aparece na hora para o Pedro, que pode ajustar e desfazer. Use o montar.py do fluxo da Aquecedores Fortes quando o pedido for esse fluxo. Só chame \`gerar_versao\` quando a edição estiver pronta ou o Pedro pedir o arquivo.`)
+
   const projLines = [
     `- Nome: ${project.name}`,
     `- Formato: ${project.format} · Resolução: ${project.resolution} · FPS: ${project.fps}`,
@@ -94,6 +108,26 @@ restaurar V2
     `- Versão atual: ${current ? `${current.label} — \`${current.path}\`` : 'nenhuma ainda (só o Original)'}`
   ]
   parts.push(`## Projeto atual\n\n${projLines.join('\n')}`)
+
+  // Cliente (Marca) e estilo (Style Memory) do projeto: o Claude segue os dois ao editar.
+  const ps = projectStyle(project.id)
+  const brand = ps.brandId ? getBrand(ps.brandId) : null
+  if (brand || ps.style) {
+    const lines: string[] = []
+    if (brand) {
+      lines.push(`- Cliente: **${brand.name}**${brand.slogan ? ` — "${brand.slogan}"` : ''}`)
+      if (brand.colors.length) lines.push(`- Cores da marca: ${brand.colors.map((c) => `${c.name} ${c.hex}`).join(', ')}`)
+      if (brand.style) lines.push(`- Estilo da marca: ${brand.style}`)
+      if (brand.preferences) lines.push(`- Preferências: ${brand.preferences}`)
+      if (brand.rules.length) lines.push(`- Regras obrigatórias: ${brand.rules.join(' · ')}`)
+    }
+    if (ps.style) {
+      lines.push(`- Estilo de edição a seguir ("${ps.style.name}", id ${ps.style.id}): ${describeStyle(ps.style)}`)
+      if (ps.style.notes) lines.push(`- Instruções do Pedro para este estilo: ${ps.style.notes}`)
+      lines.push('- Para montar do zero, prefira auto_studio (ele já usa este estilo); para vestir uma edição pronta, aplicar_estilo.')
+    }
+    parts.push(`## Cliente e estilo\n\n${lines.join('\n')}`)
+  }
 
   const trimNote = (m: (typeof media)[number]): string =>
     (m.trimIn != null || m.trimOut != null ? ` — na timeline usar só ${(m.trimIn ?? 0).toFixed(2)}–${(m.trimOut ?? m.duration ?? 0).toFixed(2)} s` : '') +

@@ -2,10 +2,11 @@ import { join } from 'node:path'
 import { app, BrowserWindow, Menu, shell } from 'electron'
 import { recoverInterruptedRuns } from './claude/claude'
 import { one, run } from './db'
-import { registerIpc } from './ipc'
+import { isAppUrl, registerIpc } from './ipc'
 import { handleMediaProtocol, registerSchemePrivileges } from './protocol'
 import { recoverRenders } from './render/queue'
 import { initUpdater } from './updater'
+import { log } from './log'
 
 // Permite rodar uma instância isolada (testes) sem tocar no banco do dia a dia.
 if (process.env.PQ_USER_DATA) app.setPath('userData', process.env.PQ_USER_DATA)
@@ -54,7 +55,7 @@ function createWindow(): void {
     titleBarOverlay: { color: '#0b0b0f', symbolColor: '#a1a1aa', height: 40 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
+      sandbox: true,
       contextIsolation: true,
       nodeIntegration: false
     }
@@ -68,7 +69,7 @@ function createWindow(): void {
     return { action: 'deny' }
   })
   win.webContents.on('will-navigate', (e, url) => {
-    if (!url.startsWith('http://localhost') && !url.startsWith('file://')) e.preventDefault()
+    if (!isAppUrl(url)) e.preventDefault()
   })
 
   if (process.env.ELECTRON_RENDERER_URL) win.loadURL(process.env.ELECTRON_RENDERER_URL)
@@ -82,7 +83,11 @@ app.on('second-instance', () => {
   }
 })
 
+process.on('uncaughtException', (err) => log.error('process.uncaught', { error: err.message, stack: err.stack }))
+process.on('unhandledRejection', (err) => log.error('process.unhandled_rejection', { error: String((err as Error)?.message ?? err) }))
+
 app.whenReady().then(() => {
+  log.info('app.start', { version: app.getVersion(), packaged: app.isPackaged })
   // Igual ao appId do instalador (o atalho do menu Iniciar usa o mesmo): é o que dá o ícone e o nome
   // certos na barra de tarefas e nas notificações. Em desenvolvimento usa outro ID, para o Windows
   // não associar o app ao electron.exe (foi o que fez a barra mostrar o átomo do Electron).

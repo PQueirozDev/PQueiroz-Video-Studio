@@ -1,14 +1,15 @@
 import { useState } from 'react'
-import { Clapperboard, FolderOpen, GitBranch, Import, Layers, Library } from 'lucide-react'
+import { Clapperboard, FolderOpen, GitBranch, Import, Layers, Library, Captions } from 'lucide-react'
+import { SubtitlesPanel } from './SubtitlesPanel'
 import { api, cx } from '@/lib/format'
 import { useStore } from '@/store'
 import { Button, IconButton } from './ui'
 import { MediaLibrary } from './MediaLibrary'
-import { Timeline } from './Timeline'
+import { TimelineEditor } from '@/editor/TimelineEditor'
 import { VersionsList } from './VersionsList'
 import { AssetsPanel } from './AssetsPanel'
 
-type Tab = 'media' | 'timeline' | 'versions' | 'assets'
+type Tab = 'media' | 'timeline' | 'versions' | 'assets' | 'subtitles'
 
 export function BottomPanel() {
   const [tab, setTab] = useState<Tab>('media')
@@ -18,6 +19,7 @@ export function BottomPanel() {
     { id: 'media', label: 'Mídia', icon: Layers, count: media.length },
     { id: 'timeline', label: 'Timeline', icon: Clapperboard },
     { id: 'versions', label: 'Versões', icon: GitBranch, count: versions.length },
+    { id: 'subtitles', label: 'Legendas', icon: Captions },
     { id: 'assets', label: 'Assets', icon: Library }
   ]
 
@@ -35,7 +37,7 @@ export function BottomPanel() {
             onClick={() => setTab(t.id)}
             className={cx(
               'flex h-6 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors',
-              tab === t.id ? 'bg-raised text-fg' : 'text-muted hover:text-fg'
+              tab === t.id ? 'bg-accent-soft text-accent ring-1 ring-accent/25' : 'text-muted hover:bg-raised hover:text-fg'
             )}
           >
             <t.icon className="h-3.5 w-3.5" />{t.label}
@@ -49,8 +51,9 @@ export function BottomPanel() {
           <Button size="sm" variant="ghost" onClick={pick}><Import className="h-3.5 w-3.5" />Importar</Button>
         </div>
       </div>
-      <div className="min-h-0 flex-1 overflow-auto">
-        {tab === 'media' ? <MediaLibrary /> : tab === 'timeline' ? <Timeline /> : tab === 'assets' ? <AssetsPanel /> : <VersionsList />}
+      <div className={cx('min-h-0 flex-1', tab === 'timeline' ? 'overflow-hidden' : 'overflow-auto')}>
+        <div className={tab === 'subtitles' ? '' : 'hidden'}><SubtitlesPanel key={projectId} /></div>
+        {tab === 'media' ? <MediaLibrary /> : tab === 'timeline' ? <TimelineEditor /> : tab === 'assets' ? <AssetsPanel /> : tab === 'versions' ? <VersionsList /> : null}
       </div>
     </section>
   )

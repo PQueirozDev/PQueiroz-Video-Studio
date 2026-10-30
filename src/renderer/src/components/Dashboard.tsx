@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Clock, Film, FolderOpen, Import, Plus, Sparkles } from 'lucide-react'
+import { Clock, Film, FolderOpen, ImageIcon, Import, Plus, Sparkles } from 'lucide-react'
+import { cx } from '@/lib/format'
 import type { AqcInfo, Project } from '@shared/types'
 import { api, fmtAgo, fmtTime, mediaUrl } from '@/lib/format'
 import { useStore } from '@/store'
@@ -18,11 +19,14 @@ export function ProjectCard({ p, onOpen }: { p: Project; onOpen(): void }) {
     <button onClick={onOpen} className="group flex flex-col overflow-hidden rounded-xl border border-line bg-panel text-left transition-all hover:-translate-y-0.5 hover:border-line-2 hover:bg-panel-2">
       <div className="relative aspect-video w-full overflow-hidden bg-bg">
         {p.thumbnail ? (
-          <img src={mediaUrl(p.thumbnail)} className="h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-100" alt="" />
+          <img src={mediaUrl(p.thumbnail)} className={cx('h-full w-full opacity-90 transition-opacity group-hover:opacity-100', p.kind === 'image' ? 'object-contain' : 'object-cover')} alt="" />
         ) : (
-          <div className="flex h-full items-center justify-center text-faint"><Film className="h-7 w-7" /></div>
+          <div className="flex h-full items-center justify-center text-faint">{p.kind === 'image' ? <ImageIcon className="h-7 w-7" /> : <Film className="h-7 w-7" />}</div>
         )}
-        {p.duration != null && (
+        <span className="absolute left-1.5 top-1.5 flex items-center gap-1 rounded bg-black/70 px-1.5 py-px text-[10px] text-muted">
+          {p.kind === 'image' ? <><ImageIcon className="h-3 w-3" />Arte</> : <><Film className="h-3 w-3" />Vídeo</>}
+        </span>
+        {p.duration != null && p.kind !== 'image' && (
           <span className="absolute bottom-1.5 right-1.5 rounded bg-black/70 px-1.5 py-px font-mono text-[10.5px]">{fmtTime(p.duration)}</span>
         )}
       </div>
@@ -33,7 +37,7 @@ export function ProjectCard({ p, onOpen }: { p: Project; onOpen(): void }) {
         </div>
         <div className="flex items-center gap-2 text-[11px] text-faint">
           <Clock className="h-3 w-3" />{fmtAgo(p.updatedAt)}
-          <span>·</span>{p.format === 'original' ? 'Original' : p.format}
+          {p.kind !== 'image' && <><span>·</span>{p.format === 'original' ? 'Original' : p.format}</>}
         </div>
       </div>
     </button>
@@ -41,8 +45,10 @@ export function ProjectCard({ p, onOpen }: { p: Project; onOpen(): void }) {
 }
 
 export function Dashboard() {
-  const { projects, openProject, setDialog, loadProjects } = useStore()
+  const { projects, openProject, setDialog, loadProjects, setView } = useStore()
   const [aqc, setAqc] = useState<AqcInfo | null>(null)
+  const [kind, setKind] = useState<'todos' | 'video' | 'image'>('todos')
+  const shown = projects.filter((p) => kind === 'todos' || p.kind === kind)
 
   useEffect(() => {
     loadProjects()
@@ -76,6 +82,10 @@ export function Dashboard() {
           <div className="flex gap-2">
             <Button onClick={openExisting}><FolderOpen className="h-4 w-4" />Abrir Projeto</Button>
             <Button onClick={quickImport}><Import className="h-4 w-4" />Importar Vídeo</Button>
+            <Button onClick={() => {
+              useStore.setState({ projectId: null })
+              setView('image')
+            }}><ImageIcon className="h-4 w-4" />Nova Arte</Button>
             <Button variant="primary" onClick={() => setDialog('newProject')}><Plus className="h-4 w-4" />Novo Projeto</Button>
           </div>
         </div>
@@ -93,7 +103,15 @@ export function Dashboard() {
           </div>
         )}
 
-        <h2 className="mb-3 text-xs font-medium uppercase tracking-wider text-faint">Recentes</h2>
+        <div className="mb-3 flex items-center gap-3">
+          <h2 className="text-xs font-medium uppercase tracking-wider text-faint">Recentes</h2>
+          <div className="flex gap-1">
+            {([['todos', 'Todos'], ['video', 'Vídeos'], ['image', 'Artes']] as const).map(([id, label]) => (
+              <button key={id} type="button" onClick={() => setKind(id)}
+                className={cx('h-6 rounded-md px-2 text-[11.5px]', kind === id ? 'bg-accent-soft text-accent' : 'text-muted hover:text-fg')}>{label}</button>
+            ))}
+          </div>
+        </div>
         {projects.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-line-2 py-16 text-center">
             <Film className="h-8 w-8 text-faint" />
@@ -102,7 +120,7 @@ export function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
-            {projects.map((p) => <ProjectCard key={p.id} p={p} onOpen={() => openProject(p.id)} />)}
+            {shown.map((p) => <ProjectCard key={p.id} p={p} onOpen={() => openProject(p.id)} />)}
           </div>
         )}
       </div>

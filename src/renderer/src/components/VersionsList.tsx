@@ -1,4 +1,4 @@
-import { Copy, Eye, FolderOpen, GitBranch, RotateCcw } from 'lucide-react'
+import { Copy, Eye, FolderOpen, GitBranch, RotateCcw, Star, Columns2 } from 'lucide-react'
 import { api, cx, fmtAgo, fmtTime, mediaUrl } from '@/lib/format'
 import { useProject, useStore } from '@/store'
 import { Badge, Button, Empty } from './ui'
@@ -65,6 +65,8 @@ export function VersionsList() {
               {v.changes && <p className="selectable line-clamp-2 text-[11px] text-faint" title={v.changes}>{v.changes.replace(/```[\s\S]*?```/g, '').slice(0, 240)}</p>}
             </div>
             <div className="flex shrink-0 items-center gap-0.5">
+              <Button size="sm" variant="ghost" title={v.favorite ? 'Remover favorita' : 'Marcar favorita'} onClick={async () => { try { if (projectId) await api.versions.favorite(projectId, v.id, !v.favorite); await refreshVersions() } catch (err) { toast((err as Error).message, 'bad') } }}><Star className={cx('h-3.5 w-3.5', v.favorite && 'fill-warn text-warn')} /></Button>
+              <Button size="sm" variant="ghost" title="Comparar com outra versão" onClick={() => { useStore.setState({ compareB: { kind: 'version', id: v.id } }); setCompare(true) }}><Columns2 className="h-3.5 w-3.5" /></Button>
               <Button size="sm" variant="ghost" onClick={() => { setCompare(false); setSource({ kind: 'version', id: v.id }) }}><Eye className="h-3.5 w-3.5" />Visualizar</Button>
               <Button size="sm" variant="ghost" disabled={isCurrent} onClick={() => restore(v.id, v.label)}><RotateCcw className="h-3.5 w-3.5" />Restaurar</Button>
               <Button size="sm" variant="ghost" onClick={() => duplicate(v.id)}><Copy className="h-3.5 w-3.5" />Duplicar</Button>

@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ArrowUp, Bot, CheckCircle2, ChevronDown, ChevronRight, ListChecks, RotateCcw, Square, Wand2 } from 'lucide-react'
 import type { ChatMessage } from '@shared/types'
-import { api, cx } from '@/lib/format'
+import { api, cx, fmtTimePrecise } from '@/lib/format'
 import { Markdown, splitBlocks } from '@/lib/markdown'
 import { useStore } from '@/store'
 import { Button, IconButton, Progress } from './ui'
@@ -16,6 +16,20 @@ const SUGGESTIONS = [
 ]
 
 const APPROVE = 'Plano aprovado. Pode executar a edição.'
+
+/** Renderiza blocos ```lang``` próprios (ex.: Image Studio); null = usa o padrão. */
+export type BlockRenderer = (lang: string, text: string, key: string, actionable: boolean) => ReactNode | null
+
+export interface ChatPanelProps {
+  title?: string
+  suggestions?: string[]
+  emptyTitle?: string
+  emptyHint?: string
+  placeholder?: string
+  renderBlock?: BlockRenderer
+  /** Conteúdo acima da caixa de texto (ex.: sugestões de melhoria). */
+  footer?: ReactNode
+}
 
 function PlanCard({ steps, actionable, onRun }: { steps: string[]; actionable: boolean; onRun(): void }) {
   return (
@@ -41,11 +55,13 @@ function PlanCard({ steps, actionable, onRun }: { steps: string[]; actionable: b
   )
 }
 
-function MessageBody({ text, actionable, onRun }: { text: string; actionable: boolean; onRun(): void }) {
+function MessageBody({ text, actionable, onRun, renderBlock, messageId = 'live' }: { text: string; actionable: boolean; onRun(): void; renderBlock?: BlockRenderer; messageId?: string }) {
   return (
     <div className="md selectable text-[13px] leading-relaxed">
       {splitBlocks(text).map((b, i) => {
         if (b.type === 'md') return <Markdown key={i} text={b.text} />
+        const custom = renderBlock?.(b.lang, b.text, `${messageId}:${i}`, actionable)
+        if (custom) return <div key={i}>{custom}</div>
         if (b.lang === 'plano') return <PlanCard key={i} steps={b.text.split('\n').filter((l) => l.trim())} actionable={actionable} onRun={onRun} />
         if (b.lang === 'acao') return <div key={i} className="my-1 flex items-center gap-1.5 text-xs text-info"><RotateCcw className="h-3 w-3" />{b.text.trim()}</div>
         return <pre key={i}><code>{b.text}</code></pre>
@@ -72,7 +88,7 @@ function Activity({ items, open: initial = false }: { items: string[]; open?: bo
   )
 }
 
-function Bubble({ m, actionable, onRun }: { m: ChatMessage; actionable: boolean; onRun(): void }) {
+function Bubble({ m, actionable, onRun, renderBlock }: { m: ChatMessage; actionable: boolean; onRun(): void; renderBlock?: BlockRenderer }) {
   if (m.role === 'system') {
     return <p className="mx-auto max-w-[90%] text-center text-[11px] text-faint">{m.content}</p>
   }
@@ -87,15 +103,15 @@ function Bubble({ m, actionable, onRun }: { m: ChatMessage; actionable: boolean;
     <div className="flex gap-2.5">
       <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent"><Bot className="h-3.5 w-3.5" /></div>
       <div className="min-w-0 flex-1">
-        <MessageBody text={m.content} actionable={actionable} onRun={onRun} />
+        <MessageBody text={m.content} actionable={actionable} onRun={onRun} renderBlock={renderBlock} messageId={m.id} />
         <Activity items={m.activity} />
       </div>
     </div>
   )
 }
 
-export function ChatPanel() {
-  const { projectId, messages, live, sendChat, chatFocusTick, toast } = useStore()
+export function ChatPanel({ title = 'Claude AI', suggestions = SUGGESTIONS, emptyTitle = 'Peça qualquer edição', emptyHint = 'O Claude usa o CLAUDE.md e o modelo de edição da pasta aqc.', placeholder = 'Ex.: junte os vídeos, tire as partes paradas e deixe pronto para Reels', renderBlock, footer }: ChatPanelProps = {}) {
+  const { projectId, messages, live, sendChat, chatFocusTick, toast, region } = useStore()
   const state = projectId ? live[projectId] : undefined
   const running = Boolean(state?.running)
   const [text, setText] = useState('')
@@ -125,9 +141,9 @@ export function ChatPanel() {
   }
 
   return (
-    <section className="flex h-full flex-col bg-panel">
+    <section data-tour="chat" className="flex h-full flex-col bg-panel">
       <div className="flex h-9 shrink-0 items-center gap-2 border-b border-line px-3">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-faint">Claude AI</span>
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-faint">{title}</span>
         <span className={cx('h-1.5 w-1.5 rounded-full', running ? 'bg-accent animate-pulse' : 'bg-ok')} />
         <IconButton title="Nova conversa (o Claude esquece o histórico do chat)" className="ml-auto" onClick={reset} disabled={running}>
           <RotateCcw className="h-3.5 w-3.5" />
@@ -139,11 +155,11 @@ export function ChatPanel() {
           <div className="flex flex-1 flex-col justify-end gap-3">
             <div className="text-center">
               <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent"><Bot className="h-4 w-4" /></div>
-              <p className="text-[13px] font-medium">Peça qualquer edição</p>
-              <p className="mt-0.5 text-xs text-faint">O Claude usa o CLAUDE.md e o modelo de edição da pasta aqc.</p>
+              <p className="text-[13px] font-medium">{emptyTitle}</p>
+              <p className="mt-0.5 text-xs text-faint">{emptyHint}</p>
             </div>
             <div className="flex flex-col gap-1.5">
-              {SUGGESTIONS.map((s) => (
+              {suggestions.map((s) => (
                 <button key={s} onClick={() => send(s)} className="rounded-lg border border-line px-3 py-1.5 text-left text-xs text-muted transition-colors hover:border-line-2 hover:bg-raised hover:text-fg">
                   {s}
                 </button>
@@ -153,14 +169,14 @@ export function ChatPanel() {
         )}
 
         {messages.map((m) => (
-          <Bubble key={m.id} m={m} actionable={!running && m.id === lastAssistant?.id && messages[messages.length - 1]?.id === m.id} onRun={() => send(APPROVE)} />
+          <Bubble key={m.id} m={m} renderBlock={renderBlock} actionable={!running && m.id === lastAssistant?.id && messages[messages.length - 1]?.id === m.id} onRun={() => send(APPROVE)} />
         ))}
 
         {running && state && (
           <div className="flex gap-2.5">
             <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent"><Bot className="h-3.5 w-3.5" /></div>
             <div className="min-w-0 flex-1">
-              {state.text && <MessageBody text={state.text} actionable={false} onRun={() => {}} />}
+              {state.text && <MessageBody text={state.text} actionable={false} onRun={() => {}} renderBlock={renderBlock} />}
               <div className="mt-2 rounded-lg border border-line bg-panel-2 px-3 py-2">
                 <p className="mb-1.5 text-xs text-muted">{state.status || 'Claude está trabalhando...'}</p>
                 <Progress indeterminate />
@@ -172,6 +188,8 @@ export function ChatPanel() {
       </div>
 
       <div className="shrink-0 border-t border-line p-2.5">
+        {footer}
+        {region && <div className="mb-2 flex items-center justify-between rounded-lg border border-accent/30 bg-accent-soft px-3 py-2 text-xs text-accent"><span>Trecho selecionado · {fmtTimePrecise(region.start)}–{fmtTimePrecise(region.end)}</span><button aria-label="Remover trecho do pedido" onClick={() => useStore.setState({ region: null })}>×</button></div>}
         <div className="flex items-end gap-2 rounded-xl border border-line-2 bg-bg p-1.5 focus-within:border-accent/60">
           <textarea
             ref={input}
@@ -184,7 +202,7 @@ export function ChatPanel() {
               }
             }}
             rows={Math.min(6, Math.max(1, text.split('\n').length))}
-            placeholder={running ? 'Claude está trabalhando...' : 'Ex.: junte os vídeos, tire as partes paradas e deixe pronto para Reels'}
+            placeholder={running ? 'Claude está trabalhando...' : placeholder}
             className="max-h-36 min-h-[28px] flex-1 resize-none bg-transparent px-1.5 py-1 text-[13px] outline-none placeholder:text-faint"
           />
           {running ? (

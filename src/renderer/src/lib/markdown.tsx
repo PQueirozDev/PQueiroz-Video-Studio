@@ -8,7 +8,7 @@ export type Block =
 
 export function splitBlocks(src: string): Block[] {
   const out: Block[] = []
-  const re = /```(\w*)[^\n]*\n([\s\S]*?)(?:```|$)/g
+  const re = /```([\w-]*)[^\n]*\n([\s\S]*?)(?:```|$)/g
   let last = 0
   for (const m of src.matchAll(re)) {
     if (m.index! > last) out.push({ type: 'md', text: src.slice(last, m.index) })
