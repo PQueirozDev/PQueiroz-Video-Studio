@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { AlertTriangle, CheckCircle2, FolderOpen, RefreshCw, XCircle } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, FolderInput, FolderOpen, RefreshCw, XCircle } from 'lucide-react'
 import type { EnvCheck } from '@shared/types'
 import { api, cx } from '@/lib/format'
 import { useStore } from '@/store'
 import { Button, Logo, Spinner } from './ui'
 import { startupChecks } from './Splash'
+import { importPresetFromFile } from './PresetsEditor'
 
 const LABELS: Record<EnvCheck['id'], string> = {
   claude: 'Claude', ffmpeg: 'FFmpeg', skills: 'Video Skills', aqc: 'Sistema de edição', python: 'Python', workspace: 'Workspace'
@@ -36,6 +37,11 @@ export function EnvChecklist({ checks, onChange, ids = ORDER }: { checks: EnvChe
     await recheck(key === 'aqcRoot' ? ['aqc', 'skills'] : [id])
   }
 
+  const importPreset = async (): Promise<void> => {
+    const r = await importPresetFromFile()
+    if (r) await recheck(['aqc', 'skills'])
+  }
+
   const setupPython = async (): Promise<void> => {
     setBusy('python')
     setPyLog('Preparando ambiente Python... isso pode levar alguns minutos.')
@@ -55,7 +61,8 @@ export function EnvChecklist({ checks, onChange, ids = ORDER }: { checks: EnvChe
               {c ? <StateIcon state={c.state} /> : <Spinner className="h-4 w-4 text-faint" />}
               <span className="w-24 shrink-0 text-[13px] font-medium">{LABELS[id]}</span>
               <span className="selectable min-w-0 flex-1 truncate text-xs text-muted" title={c?.detail}>{c?.detail ?? 'verificando...'}</span>
-              {id === 'aqc' && <Button size="sm" variant="ghost" onClick={() => pickFolder('aqcRoot', 'aqc')}><FolderOpen className="h-3.5 w-3.5" />Alterar</Button>}
+              {id === 'aqc' && c && c.state !== 'ok' && <Button size="sm" variant="primary" onClick={importPreset}><FolderInput className="h-3.5 w-3.5" />Importar preset</Button>}
+              {id === 'aqc' && <Button size="sm" variant="ghost" onClick={() => pickFolder('aqcRoot', 'aqc')}><FolderOpen className="h-3.5 w-3.5" />{settings?.aqcRoot ? 'Alterar' : 'Escolher pasta'}</Button>}
               {id === 'workspace' && <Button size="sm" variant="ghost" onClick={() => pickFolder('projectsRoot', 'workspace')}><FolderOpen className="h-3.5 w-3.5" />Alterar</Button>}
               {id === 'python' && c && c.state !== 'ok' && (
                 <Button size="sm" variant="primary" disabled={busy === 'python'} onClick={setupPython}>

@@ -140,7 +140,9 @@ const MIGRATIONS: [table: string, column: string, type: string][] = [
   ['renders', 'notice', 'TEXT'],
   ['projects', 'kind', "TEXT NOT NULL DEFAULT 'video'"],
   ['projects', 'brand_id', 'TEXT'],
-  ['projects', 'style_id', 'TEXT']
+  ['projects', 'style_id', 'TEXT'],
+  ['presets', 'author', "TEXT NOT NULL DEFAULT ''"],
+  ['presets', 'workflow_dir', 'TEXT']
 ]
 
 function migrate(d: DatabaseSync): void {

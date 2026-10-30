@@ -1,5 +1,5 @@
 import { spawn, type ChildProcess } from 'node:child_process'
-import { writeFileSync } from 'node:fs'
+import { existsSync, writeFileSync } from 'node:fs'
 import { delimiter, dirname } from 'node:path'
 import type { ChatMessage, ClaudeEvent, Version } from '@shared/types'
 import { all, run } from '../db'
@@ -160,7 +160,8 @@ async function startChat(projectId: string, text: string, emit: Emit): Promise<v
     '--append-system-prompt-file', ctxFile,
     // Sem isso o CLI congela o prompt do 1º turno e o Claude não veria mídias/versões novas ao retomar.
     '--system-prompt-snapshot', 'off',
-    '--add-dir', isImage ? s.assetsRoot : s.aqcRoot,
+    // Image Studio: biblioteca de assets; Video Studio: sistema de edição, só se existir neste computador.
+    ...(isImage ? ['--add-dir', s.assetsRoot] : s.aqcRoot && existsSync(s.aqcRoot) ? ['--add-dir', s.aqcRoot] : []),
     '--permission-mode', 'acceptEdits',
     '--allowedTools', ...(isImage ? IMAGE_TOOLS : [...ALLOWED_TOOLS, 'mcp__pqstudio']),
     '--disallowedTools', ...DENIED_TOOLS, ...(isImage ? ['Bash', 'PowerShell', 'WebFetch', 'WebSearch'] : []),

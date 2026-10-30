@@ -105,7 +105,13 @@ const api: StudioApi = {
   presets: {
     list: invoke('presets:list'),
     save: invoke('presets:save'),
-    remove: invoke('presets:remove')
+    remove: invoke('presets:remove'),
+    exportToFile: invoke('presets:exportToFile'),
+    importFromFile: invoke('presets:importFromFile'),
+    importFromUrl: invoke('presets:importFromUrl'),
+    community: invoke('presets:community'),
+    installCommunity: invoke('presets:installCommunity'),
+    useWorkflow: invoke('presets:useWorkflow')
   } as StudioApi['presets'],
   auto: {
     run: invoke('auto:run')

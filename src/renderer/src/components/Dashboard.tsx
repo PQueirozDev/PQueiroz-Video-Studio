@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Clock, Film, FolderOpen, ImageIcon, Import, Plus, Sparkles } from 'lucide-react'
+import { Clock, Film, FolderInput, FolderOpen, ImageIcon, Import, Package, Plus, Sparkles } from 'lucide-react'
 import { cx } from '@/lib/format'
 import type { AqcInfo, Project } from '@shared/types'
 import { api, fmtAgo, fmtTime, mediaUrl } from '@/lib/format'
 import { useStore } from '@/store'
 import { Badge, Button } from './ui'
+import { importPresetFromFile } from './PresetsEditor'
 
 const STATUS: Record<Project['status'], { label: string; tone: 'neutral' | 'accent' | 'ok' | 'info' }> = {
   novo: { label: 'Novo', tone: 'neutral' },
@@ -65,7 +66,7 @@ export function Dashboard() {
     const paths = await api.media.pickFiles()
     if (!paths.length) return
     const name = paths[0].split(/[\\/]/).pop()!.replace(/\.[^.]+$/, '')
-    const p = await api.projects.create({ name, format: '9:16', resolution: '1080p', fps: 'original', preset: 'aquecedores-fortes' })
+    const p = await api.projects.create({ name, format: '9:16', resolution: '1080p', fps: 'original', preset: aqc?.templateDir ? 'aquecedores-fortes' : 'nenhum' })
     await openProject(p.id)
     await useStore.getState().importPaths(paths)
     await loadProjects()
@@ -100,6 +101,21 @@ export function Dashboard() {
               </p>
             </div>
             {aqc.workflow.some((w) => !w.found) && <Badge tone="warn">skill ausente: {aqc.workflow.filter((w) => !w.found).map((w) => w.name).join(', ')}</Badge>}
+          </div>
+        )}
+
+        {aqc && !aqc.exists && (
+          <div className="mb-8 flex items-center gap-4 rounded-xl border border-line bg-panel px-4 py-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent"><Package className="h-4 w-4" /></div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-medium">Traga o seu fluxo de edição para este computador</p>
+              <p className="text-xs text-faint">
+                No computador onde está o seu sistema de edição, abra Configurações › Presets e use "Exportar preset" com o sistema de edição incluído. Depois importe o arquivo aqui.
+              </p>
+            </div>
+            <Button onClick={async () => {
+              if (await importPresetFromFile()) api.env.aqcInfo().then(setAqc)
+            }}><FolderInput className="h-4 w-4" />Importar preset</Button>
           </div>
         )}
 

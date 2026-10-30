@@ -173,6 +173,7 @@ export interface SkillInfo {
 }
 
 export interface AqcInfo {
+  /** Vazio quando nenhum sistema de edição foi configurado neste computador. */
   root: string
   exists: boolean
   workflow: SkillInfo[]
@@ -191,6 +192,62 @@ export interface Preset {
   description: string
   /** Instrução adicionada ao contexto do Claude quando o preset está ativo. */
   prompt: string
+  /** Quem criou (presets importados de outras pessoas). */
+  author: string
+  /** Pasta do sistema de edição que veio junto com o preset (CLAUDE.md, Modelo edicao, skills). */
+  workflowDir: string | null
+}
+
+/** Arquivo dentro de um pacote de preset (caminho relativo à raiz do sistema de edição). */
+export interface PresetPackFile {
+  path: string
+  encoding: 'utf8' | 'base64'
+  content: string
+}
+
+/**
+ * Pacote compartilhável (.pqpreset = JSON compactado com gzip; JSON puro também é aceito).
+ * `workflow` é opcional: com ele, quem importa recebe o sistema de edição completo.
+ */
+export interface PresetPack {
+  kind: 'pqueiroz-preset'
+  version: 1
+  name: string
+  author: string
+  format: AspectFormat
+  description: string
+  prompt: string
+  createdAt: number
+  workflow?: { files: PresetPackFile[] }
+}
+
+export interface PresetExportOptions {
+  /** Inclui CLAUDE.md, Modelo edicao e as skills de vídeo do Claude. */
+  includeWorkflow: boolean
+  /** Inclui a pasta Recursos (músicas, logos) — o arquivo fica bem maior. */
+  includeResources: boolean
+}
+
+export interface PresetImportResult {
+  preset: Preset
+  /** Arquivos do sistema de edição instalados (0 se o pacote só tinha instruções). */
+  workflowFiles: number
+  /** Skills copiadas para ~/.claude/skills (as que já existiam não são sobrescritas). */
+  skillsInstalled: string[]
+  /** true se o fluxo do preset virou o sistema de edição ativo. */
+  activated: boolean
+}
+
+/** Item do catálogo de presets da comunidade (presets/index.json no GitHub). */
+export interface CommunityPreset {
+  id: string
+  name: string
+  author: string
+  format: AspectFormat
+  description: string
+  /** Caminho relativo a presets/ ou URL https completa. */
+  file: string
+  hasWorkflow: boolean
 }
 
 export interface EditTimeline {
@@ -216,7 +273,7 @@ export interface AssetItem {
   name: string
   path: string
   size: number
-  /** true para os arquivos de E:\aqc\Recursos (somente leitura). */
+  /** true para os arquivos de <sistema de edição>/Recursos (somente leitura). */
   readOnly: boolean
   thumbnail: string | null
 }
@@ -226,6 +283,7 @@ export interface PresetInput {
   format: AspectFormat
   description: string
   prompt: string
+  author?: string
 }
 
 export type UpdateState =

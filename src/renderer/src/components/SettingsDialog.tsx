@@ -27,7 +27,7 @@ function FolderField({ label, k, hint }: { label: string; k: 'projectsRoot' | 'e
   return (
     <Field label={label} hint={hint}>
       <div className="flex items-center gap-2">
-        <span className="selectable min-w-0 flex-1 truncate rounded-lg border border-line-2 bg-bg px-3 py-2 font-mono text-[11.5px] text-muted">{settings?.[k]}</span>
+        <span className="selectable min-w-0 flex-1 truncate rounded-lg border border-line-2 bg-bg px-3 py-2 font-mono text-[11.5px] text-muted">{settings?.[k] || 'nenhuma'}</span>
         <Button size="sm" onClick={async () => {
           const dir = await api.settings.pickFolder(label, settings?.[k])
           if (dir) await saveSettings({ [k]: dir })
@@ -125,9 +125,9 @@ export function SettingsDialog() {
           {tab === 'geral' && (
             <>
               <Section title="Pastas">
-                <FolderField label="Sistema de edição (aqc)" k="aqcRoot" hint="Somente leitura: o estúdio nunca altera os arquivos desta pasta." />
+                <FolderField label="Sistema de edição (aqc)" k="aqcRoot" hint="Opcional. Pasta com o CLAUDE.md e o Modelo edicao — ou importe um preset que traga o fluxo (aba Presets). Somente leitura." />
                 <FolderField label="Pasta dos projetos" k="projectsRoot" />
-                <FolderField label="Pasta de exportação" k="exportRoot" hint="Por padrão, a mesma pasta 'Videos feitos' do fluxo atual." />
+                <FolderField label="Pasta de exportação" k="exportRoot" hint="Para onde vão os vídeos renderizados." />
                 <FolderField label="Biblioteca de assets" k="assetsRoot" hint="Logos, músicas, fontes, overlays e intros reutilizáveis entre projetos." />
               </Section>
               <Section title="Sobre"><AboutSection /></Section>

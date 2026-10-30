@@ -6,7 +6,7 @@ import { ensureDir, isInside, slugify, validatePath } from '../files'
 import { getSettings } from '../settings'
 import { now, uid } from '../util'
 
-// Estrutura de cada projeto. "edit/" é criada pelo Claude ao copiar o "Modelo edicao" de E:\aqc,
+// Estrutura de cada projeto. "edit/" é criada pelo Claude ao copiar o "Modelo edicao" do sistema de edição,
 // do mesmo jeito que o fluxo atual faz com "<pasta do trabalho>/edit".
 export const PROJECT_DIRS = ['input', 'assets', 'temp', 'output', 'versions'] as const
 

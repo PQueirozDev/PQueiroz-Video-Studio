@@ -1,0 +1,10 @@
+{
+  "kind": "pqueiroz-preset",
+  "version": 1,
+  "name": "Cortes de podcast",
+  "author": "PQueiroz Video Studio",
+  "format": "9:16",
+  "description": "1080×1920, cortes de 30–60 s com legenda grande palavra a palavra.",
+  "prompt": "Preset \"Cortes de podcast\": encontre os trechos mais fortes (opinião, história, frase de efeito) e gere cortes verticais 1080×1920 de 30–60 s. Enquadre quem está falando (crop centralizado no rosto), legenda grande e centralizada palavra a palavra, gancho nos primeiros 3 s, remova silêncios acima de 0,4 s, loudnorm -14 LUFS. Proponha os cortes com início/fim antes de renderizar.",
+  "createdAt": 1791158400000
+}

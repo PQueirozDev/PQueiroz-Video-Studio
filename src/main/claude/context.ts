@@ -29,9 +29,17 @@ export async function buildContext(project: Project): Promise<string> {
   const current = project.currentVersionId ? getVersion(project.currentVersionId) : null
   const preset = presetById(project.preset)
   const missingSkills = aqc.workflow.filter((w) => !w.found)
+  const hasAqc = aqc.exists
+  const hasTemplate = Boolean(aqc.templateDir)
 
   const parts: string[] = []
-  parts.push(`# PQueiroz Video Studio
+  if (!hasAqc) {
+    parts.push(`# PQueiroz Video Studio
+
+Você está rodando dentro do **PQueiroz Video Studio**, a interface gráfica de edição de vídeo do Pedro. Responda sempre em português do Brasil, de forma curta e direta — a resposta aparece num painel de chat estreito.
+
+Este computador **não tem um sistema de edição (CLAUDE.md + Modelo edicao) configurado**. Edite direto com FFmpeg (e Python, se disponível), seguindo o preset do projeto e as skills de vídeo listadas abaixo. Se o Pedro quiser o fluxo completo do PC dele, ele pode importar um preset com o fluxo em Configurações › Presets.`)
+  } else parts.push(`# PQueiroz Video Studio
 
 Você está rodando dentro do **PQueiroz Video Studio**, a interface gráfica do Pedro para o fluxo de edição que já existe em \`${s.aqcRoot}\`. Responda sempre em português do Brasil, de forma curta e direta — a resposta aparece num painel de chat estreito.
 
@@ -40,7 +48,7 @@ O fluxo de edição continua sendo o do CLAUDE.md de \`${s.aqcRoot}\` (reproduzi
   parts.push(`## Ambiente
 
 - Pasta do projeto (seu diretório de trabalho): \`${project.path}\`
-- Sistema de edição original: \`${s.aqcRoot}\` (SOMENTE LEITURA)
+- Sistema de edição original: ${hasAqc ? `\`${s.aqcRoot}\` (SOMENTE LEITURA)` : 'nenhum neste computador'}
 - FFmpeg: ${ff ? `\`${ff}\`` : 'NÃO ENCONTRADO'}
 - Python para o montar.py: ${py ? `\`${py}\` — rode como \`PYTHONUTF8=1 "${py}" montar.py --preview\`` : '**NÃO INSTALADO.** O montar.py não roda. Avise o Pedro para usar "Preparar ambiente Python" em Configurações; enquanto isso, edições simples podem ser feitas direto com ffmpeg.'}
 ${aqc.stalePaths.length ? `- **Caminhos antigos:** o CLAUDE.md e os scripts (${aqc.stalePaths.join(', ')}) citam \`C:\\aqc\`, mas a pasta agora é \`${s.aqcRoot}\`. Leia todo \`C:\\aqc\` como \`${s.aqcRoot}\`. A cópia em \`edit/\` já foi corrigida pelo estúdio (RES, HISTORICO e a leitura do ffprobe para o FFmpeg 9).` : ''}
@@ -51,7 +59,7 @@ ${missingSkills.length ? `- A skill ${missingSkills.map((m) => `\`${m.name}\``).
 
 - \`input/\` — vídeos originais importados (NUNCA altere nem apague)
 - \`assets/\` — imagens, logos e áudios importados
-- \`edit/\` — cópia de \`${join(s.aqcRoot, 'Modelo edicao')}\` JÁ PREPARADA pelo estúdio (passo 4 do CLAUDE.md feito; não copie de novo). Falta só ajustar o bloco DADOS DO TRABALHO e o PLAN do \`montar.py\`, com caminhos absolutos para A, B e GAUGE apontando para \`input/\` e \`assets/\`. Não remova as correções já aplicadas (RES, HISTORICO, \`.split(",")[0]\` na contagem de quadros).
+${!hasTemplate ? '- `edit/` — sua área de trabalho para scripts e arquivos de edição (não há Modelo edicao neste computador)' : `- \`edit/\` — cópia de \`${join(s.aqcRoot, 'Modelo edicao')}\` JÁ PREPARADA pelo estúdio (passo 4 do CLAUDE.md feito; não copie de novo). Falta só ajustar o bloco DADOS DO TRABALHO e o PLAN do \`montar.py\`, com caminhos absolutos para A, B e GAUGE apontando para \`input/\` e \`assets/\`. Não remova as correções já aplicadas (RES, HISTORICO, \`.split(",")[0]\` na contagem de quadros).`}
 - \`temp/\` — arquivos intermediários
 - \`output/\` — entregáveis. **Todo vídeo que o Pedro deve ver vai para cá** (ou fica como \`edit/preview.mp4\` / \`edit/final.mp4\`)
 - \`versions/\` — gerenciada pelo estúdio, não mexa
@@ -61,8 +69,7 @@ O passo 7 do CLAUDE.md ("copie para Videos feitos") NÃO se aplica aqui: o botã
 
   parts.push(`## Regras de segurança
 
-- Nunca altere, mova ou apague arquivos de \`${s.aqcRoot}\` (exceção: o próprio montar.py acrescentar o registro em historico_videos.json no render final).
-- Nunca apague nada em \`input/\` ou \`versions/\`. Trabalhe sempre com cópias.
+${hasAqc ? `- Nunca altere, mova ou apague arquivos de \`${s.aqcRoot}\` (exceção: o próprio montar.py acrescentar o registro em historico_videos.json no render final).\n` : ''}- Nunca apague nada em \`input/\` ou \`versions/\`. Trabalhe sempre com cópias.
 - Nada de comandos destrutivos (rm -rf, del /s, format…). Não publique nem agende nada em redes sociais.
 - Não invente dados da empresa (preço, endereço, serviço) — pergunte.`)
 

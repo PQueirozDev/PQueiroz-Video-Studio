@@ -8,12 +8,14 @@ import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { getClaudeUsage, onUsageUpdate } from './claude/usage'
 import { checkForUpdates, installUpdate, updateState } from './updater'
-import type { AssetCategory, ClaudeEvent, Settings } from '@shared/types'
+import type { AssetCategory, ClaudeEvent, CommunityPreset, PresetExportOptions, Settings } from '@shared/types'
 import { cancelChat, chatHistory, isRunning, resetSession, sendChat } from './claude/claude'
 import { checkEnv, setupPython } from './env'
-import { EXTENSIONS, validatePath } from './files'
+import { EXTENSIONS, slugify, validatePath } from './files'
 import { editTimeline, importMedia, listMedia, removeMedia, reorderMedia } from './media/media'
-import { deletePreset, listPresets, savePreset } from './presets'
+import {
+  communityPresets, deletePreset, importPresetFile, importPresetUrl, installCommunityPreset, listPresets, savePreset, useWorkflow, writePackFile
+} from './presets'
 import { addAssets, libraryRoot, listAssets, useAsset } from './assets/library'
 import { bus, type MediaChanged, type TaskProgress } from './events'
 import { assembleTimeline, setInTimeline, setTrim } from './media/timeline'
@@ -91,7 +93,8 @@ export function registerIpc(): void {
   handle('settings:get', () => getSettings())
   handle('settings:update', (patch: Partial<Settings>) => {
     for (const key of ['aqcRoot', 'projectsRoot', 'exportRoot'] as const) {
-      if (patch[key] !== undefined) validatePath(patch[key]!)
+      // aqcRoot vazio = nenhum sistema de edição neste computador.
+      if (patch[key] !== undefined && !(key === 'aqcRoot' && patch[key] === '')) validatePath(patch[key]!)
     }
     clearToolCache()
     return updateSettings(patch)
@@ -210,6 +213,43 @@ export function registerIpc(): void {
   handle('presets:list', () => listPresets())
   handle('presets:save', (id: string | null, input) => savePreset(id, input))
   handle('presets:remove', (id: string) => deletePreset(id))
+  handle('presets:exportToFile', async (id: string, options: PresetExportOptions) => {
+    const preset = listPresets().find((p) => p.id === id)
+    if (!preset) throw new Error('Preset não encontrado.')
+    const r = await dialog.showSaveDialog({
+      title: 'Exportar preset', defaultPath: `${slugify(preset.name)}.pqpreset`,
+      filters: [{ name: 'Preset do PQueiroz Video Studio', extensions: ['pqpreset'] }]
+    })
+    if (r.canceled || !r.filePath) return null
+    writePackFile(id, { includeWorkflow: Boolean(options?.includeWorkflow), includeResources: Boolean(options?.includeResources) }, r.filePath)
+    shell.showItemInFolder(r.filePath)
+    return r.filePath
+  })
+  handle('presets:importFromFile', async () => {
+    const r = await dialog.showOpenDialog({
+      title: 'Importar preset', properties: ['openFile'],
+      filters: [{ name: 'Preset do PQueiroz Video Studio', extensions: ['pqpreset', 'json'] }]
+    })
+    if (r.canceled || !r.filePaths[0]) return null
+    const result = await importPresetFile(r.filePaths[0])
+    clearToolCache()
+    return result
+  })
+  handle('presets:importFromUrl', async (url: string) => {
+    const result = await importPresetUrl(url)
+    clearToolCache()
+    return result
+  })
+  handle('presets:community', () => communityPresets())
+  handle('presets:installCommunity', async (item: CommunityPreset) => {
+    const result = await installCommunityPreset(item)
+    clearToolCache()
+    return result
+  })
+  handle('presets:useWorkflow', (id: string) => {
+    useWorkflow(id)
+    return getSettings()
+  })
 
   // Timeline manual
   handle('media:setTrim', (projectId, id, a, b) => editWithHistory(projectId, () => setTrim(projectId, id, a, b)))
