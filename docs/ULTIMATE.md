@@ -135,4 +135,4 @@ Também entraram: slip (Alt+arrastar), agrupar (Ctrl+G; rampas nascem agrupadas)
 - O easing de um segmento dividido ao meio é reaproveitado inteiro (a curva muda um pouco depois de dividir).
 - A prévia exata reinicia fades cortados pelas bordas do trecho (só a prévia).
 - Máscara usa `geq` (~10 fps em 1080p no render): use em trechos curtos.
-- Publicado como v0.3.0.
+- Publicado como v0.3.1.

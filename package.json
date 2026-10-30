@@ -1,7 +1,7 @@
 {
   "name": "pqueiroz-video-studio",
   "productName": "PQueiroz Video Studio",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Central de edição de vídeos assistida por IA: projetos, preview, versões e render, com o Claude Code usando o seu fluxo de edição.",
   "author": "Pedro Queiroz",
   "private": true,
